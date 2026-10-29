@@ -1,0 +1,79 @@
+{
+  "properties": {
+    "currency_id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "exchange_currency": {
+      "properties": {
+        "id": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "name": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "round_factor": {
+          "type": [
+            "number",
+            "null"
+          ]
+        }
+      },
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "exchange_currency_id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "exchange_rate_date": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "factor_nr": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "factor_nr_to_ratio": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "ratio": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "source": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "source_reason": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "type": "object"
+}

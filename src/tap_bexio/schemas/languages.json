@@ -1,0 +1,47 @@
+{
+  "properties": {
+    "date_format": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "date_format_id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "decimal_point": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "iso_639_1": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "name": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "thousands_separator": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "type": "object"
+}

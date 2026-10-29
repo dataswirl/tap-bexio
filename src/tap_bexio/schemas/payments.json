@@ -1,0 +1,213 @@
+{
+  "properties": {
+    "additional_information": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "allowance": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "amount": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "created_at": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "currency": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "document_no": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "due_date": {
+      "format": "date",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "execution_date": {
+      "format": "date",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "instruction_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "is_editing_restricted": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "is_salary": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "message": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "purchase_reference": {
+      "properties": {
+        "bill_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "bill_payment_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "qr_reference_number": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "recipient": {
+      "properties": {
+        "address": {
+          "properties": {
+            "city": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "country_code": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "house_number": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "street_name": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "zip": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "iban": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "name": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "sender": {
+      "properties": {
+        "iban": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "id": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "uuid": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "status": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "type": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "uuid": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "type": "object"
+}

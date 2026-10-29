@@ -1,0 +1,65 @@
+{
+  "properties": {
+    "date": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "document_id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "image": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "image_path": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "is_public": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "text": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "user_email": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "user_id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "user_name": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "type": "object"
+}

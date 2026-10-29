@@ -1,0 +1,23 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# Tooling caches
+.ruff_cache/
+.pytest_cache/
+
+# Meltano / Singer
+.meltano/
+.env
+config.json
+state.json
+output/
+
+.idea/

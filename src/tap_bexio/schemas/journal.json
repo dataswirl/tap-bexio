@@ -1,0 +1,84 @@
+{
+  "properties": {
+    "amount": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "base_currency_amount": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "base_currency_id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "credit_account_id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "currency_factor": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "currency_id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "date": {
+      "format": "date-time",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "debit_account_id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "description": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "ref_class": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "ref_id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "ref_uuid": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "type": "object"
+}

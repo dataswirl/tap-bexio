@@ -1,0 +1,75 @@
+{
+  "properties": {
+    "created_at": {
+      "format": "date-time",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "default_tax_expense_id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "default_tax_income_id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "end": {
+      "format": "date",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "is_annual_reporting": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "is_vat_subject": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "start": {
+      "format": "date",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "updated_at": {
+      "format": "date-time",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "vat_accounting_method": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "vat_accounting_type": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "type": "object"
+}

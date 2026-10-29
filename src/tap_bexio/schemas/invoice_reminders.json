@@ -1,0 +1,91 @@
+{
+  "properties": {
+    "document_id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "footer": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "header": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "is_sent": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "is_valid_from": {
+      "format": "date",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "is_valid_to": {
+      "format": "date",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "kb_invoice_id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "received_total": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "remaining_price": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "reminder_level": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "reminder_period_in_days": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "show_positions": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "title": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "type": "object"
+}

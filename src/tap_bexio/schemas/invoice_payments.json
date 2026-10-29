@@ -1,0 +1,84 @@
+{
+  "properties": {
+    "bank_account_id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "date": {
+      "format": "date",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "document_id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "is_cash_discount": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "is_client_account_redemption": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "kb_bill_id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "kb_credit_voucher_id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "kb_credit_voucher_text": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "kb_invoice_id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "payment_service_id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "title": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "value": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "type": "object"
+}

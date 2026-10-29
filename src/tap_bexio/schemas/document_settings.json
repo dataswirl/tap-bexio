@@ -1,0 +1,143 @@
+{
+  "properties": {
+    "default_client_bank_account_new_id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "default_currency_id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "default_language_id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "default_logopaper_id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "default_mwst_is_net": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "default_mwst_type": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "default_nb_decimals_amount": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "default_nb_decimals_price": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "default_payment_type_id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "default_show_esr_on_same_page": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "default_show_position_taxes": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "default_show_total": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "default_time_period_in_days": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "default_title": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "enumeration_format": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "kb_item_class": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "kb_terms_of_payment_template_id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "next_nr": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "nr_min_length": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "text": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "use_automatic_enumeration": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "use_yearly_enumeration": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    }
+  },
+  "type": "object"
+}

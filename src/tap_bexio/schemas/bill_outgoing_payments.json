@@ -1,0 +1,78 @@
+{
+  "properties": {
+    "amount": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "banking_payment_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "bill_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "execution_date": {
+      "format": "date",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "is_salary_payment": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "payment_type": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "receiver_account_no": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "receiver_iban": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "sender_bank_account_id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "status": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "transaction_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "type": "object"
+}

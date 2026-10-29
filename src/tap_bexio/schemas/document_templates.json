@@ -1,0 +1,35 @@
+{
+  "properties": {
+    "default_for_document_types": {
+      "items": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "type": [
+        "array",
+        "null"
+      ]
+    },
+    "is_default": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "name": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "template_slug": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "type": "object"
+}

@@ -1,0 +1,41 @@
+{
+  "properties": {
+    "email": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "firstname": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "lastname": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "salutation_type": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "title_id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    }
+  },
+  "type": "object"
+}

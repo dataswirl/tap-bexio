@@ -1,0 +1,127 @@
+{
+  "properties": {
+    "attachment_ids": {
+      "items": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "type": [
+        "array",
+        "null"
+      ]
+    },
+    "average_exchange_rate_enabled": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "booking_account_id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "chargeable_customer_id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "created_at": {
+      "format": "date-time",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "currency_code": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "document_no": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "firstname_suffix": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "gross": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "invoice_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "lastname_company": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "net": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "paid_on": {
+      "format": "date",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "project_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "status": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "title": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "transaction_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "vendor": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "type": "object"
+}

@@ -1,0 +1,21 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.17.0
+    hooks:
+      - id: ruff-check
+        args: [--fix]
+      - id: ruff-format
+  - repo: local
+    hooks:
+      # Runs the ty version locked in uv.lock, in the project environment, so imports resolve.
+      - id: ty
+        name: ty check
+        entry: uv run --frozen ty check
+        language: system
+        types_or: [python, pyi]
+        pass_filenames: false

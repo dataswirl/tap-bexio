@@ -1,0 +1,29 @@
+{
+  "properties": {
+    "id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "iso_3166_alpha2": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "name": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "name_short": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "type": "object"
+}

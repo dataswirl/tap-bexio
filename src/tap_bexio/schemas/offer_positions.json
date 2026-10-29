@@ -1,0 +1,161 @@
+{
+  "properties": {
+    "account_id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "amount": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "amount_completed": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "amount_open": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "amount_reserved": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "article_id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "discount_in_percent": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "discount_total": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "document_id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "internal_pos": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "is_optional": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "is_percentual": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "pagebreak": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "parent_id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "pos": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "position_total": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "show_pos_nr": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "tax_id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "tax_value": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "text": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "type": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "unit_id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "unit_name": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "unit_price": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "value": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "type": "object"
+}

@@ -1,0 +1,65 @@
+{
+  "properties": {
+    "exchange_rate": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "exchange_rate_date": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "exchange_rate_id": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "exchange_rate_to_ratio": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "name": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "ratio": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "round_factor": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "source": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "source_reason": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "type": "object"
+}

@@ -1,0 +1,60 @@
+{
+  "properties": {
+    "contact_id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "entry_id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "event_start": {
+      "format": "date-time",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "info": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "module_id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "project_id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "subject": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "user_id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    }
+  },
+  "type": "object"
+}

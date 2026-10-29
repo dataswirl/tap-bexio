@@ -1,0 +1,182 @@
+{
+  "properties": {
+    "address": {
+      "properties": {
+        "canton": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "city": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "complementary_line": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "country": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "house_number": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "locality": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "municipality_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "postbox": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "street": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "street_name": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "zip_code": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "ahv_number": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "annual_vacation_days_total": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "date_of_birth": {
+      "format": "date",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "email": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "employment_level": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "first_name": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "gender": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "hours_per_week": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "iban": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "language": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "last_name": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "marital_status": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "nationality": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "personal_number": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "phone_number": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "stay_permit_category": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "type": "object"
+}

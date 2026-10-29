@@ -1,0 +1,165 @@
+{
+  "properties": {
+    "allowable_bill": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "charge": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "client_service_id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "contact_id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "date": {
+      "format": "date",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "duration": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "estimated_time": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "pr_milestone_id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "pr_package_id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "pr_project_id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "running": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "status_id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "sub_contact_id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "task_id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "text": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "tracking": {
+      "properties": {
+        "date": {
+          "format": "date",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "duration": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "end": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "start": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "type": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "travel_charge": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "travel_distance": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "travel_time": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "user_id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    }
+  },
+  "type": "object"
+}

@@ -1,0 +1,36 @@
+{
+  "properties": {
+    "contact_id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "contact_sub_id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "description": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "updated_at": {
+      "format": "date-time",
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "type": "object"
+}

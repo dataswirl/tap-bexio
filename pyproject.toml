@@ -1,0 +1,74 @@
+[project]
+name = "tap-bexio"
+version = "0.1.0"
+description = "Singer tap for Bexio, built with the Meltano Singer SDK."
+readme = "README.md"
+authors = [
+    { name = "Alexander Sokolov", email = "alsokoloff@gmail.com" }
+]
+keywords = ["ELT", "Meltano", "Singer", "Bexio"]
+license = "Apache-2.0"
+classifiers = [
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+]
+requires-python = ">=3.12"
+dependencies = [
+    "singer-sdk~=0.54.8",
+    "requests~=2.32",
+]
+
+[project.urls]
+Repository = "https://github.com/dataswirl/tap-bexio"
+
+[project.scripts]
+tap-bexio = "tap_bexio.tap:TapBexio.cli"
+
+[dependency-groups]
+dev = [
+    "pre-commit>=4.7",
+    "pytest>=9.1",
+    "responses>=0.25",
+    "ruff>=0.17",
+    "singer-sdk[testing]~=0.54.8",
+    "ty>=0.0.87",
+]
+
+[build-system]
+requires = ["uv_build>=0.12.18,<0.13.0"]
+build-backend = "uv_build"
+
+[tool.uv]
+# Supply-chain cooldown: ignore any package version published in the last 2 weeks.
+exclude-newer = "2 weeks"
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["ALL"]
+ignore = [
+    "COM812",  # conflicts with the formatter
+    "CPY001",  # no per-file copyright headers
+    "D203",    # incompatible with D211
+    "D213",    # incompatible with D212
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["S101", "ANN", "D", "PLR2004"]
+"scripts/**" = ["INP001"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ty.environment]
+python-version = "3.12"
+
+[tool.pytest.ini_options]
+addopts = ["-ra", "--exitfirst"]
+testpaths = ["tests"]

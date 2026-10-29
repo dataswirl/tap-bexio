@@ -1,0 +1,67 @@
+{
+  "properties": {
+    "business_year": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "continued_pay": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "disability": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "employee_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "end_date": {
+      "format": "date",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "half_day": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "paid_hours": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "reason": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "start_date": {
+      "format": "date",
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "type": "object"
+}

@@ -1,0 +1,334 @@
+{
+  "properties": {
+    "api_reference": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "bank_account_id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "contact_address_manual": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "contact_id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "contact_sub_id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "created_at": {
+      "format": "date-time",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "currency": {
+      "properties": {
+        "id": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "name": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "round_factor": {
+          "type": [
+            "number",
+            "null"
+          ]
+        }
+      },
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "currency_id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "custom_translations": {
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "date_format": {
+      "properties": {
+        "date_format": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "date_format_id": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        }
+      },
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "delivery_address_manual": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "delivery_address_type": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "document_nr": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "footer": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "header": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "is_compact_view": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "is_valid_from": {
+      "format": "date",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "is_valid_to": {
+      "format": "date",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "is_valid_until": {
+      "format": "date",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "kb_item_status_id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "kb_payment_template_id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "language": {
+      "properties": {
+        "date_format": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "decimalpoint": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "id": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "iso_639_1": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "name": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "thousandsseparator": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "language_id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "logopaper_id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "mail": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "mwst_is_net": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "mwst_type": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "nb_decimals_amount": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "nb_decimals_price": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "payment_type_id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "project_id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "reference": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "salesman_user_id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "show_position_taxes": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "template_slug": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "terms_of_payment_text": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "title": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "total_rounding_difference": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "updated_at": {
+      "format": "date-time",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "user_id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "viewed_by_client_at": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "type": "object"
+}

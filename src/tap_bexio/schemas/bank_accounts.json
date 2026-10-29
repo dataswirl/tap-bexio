@@ -1,0 +1,161 @@
+{
+  "properties": {
+    "account_id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "bank_account_nr": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "bank_name": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "bank_nr": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "bc_nr": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "currency_id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "esr_besr_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "esr_bottom_line_include_amount": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "esr_in_favour_of_text": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "esr_payment_for_text": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "esr_post_account_nr": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "iban_nr": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "invoice_mode": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "is_esr": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "name": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "owner": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "owner_address": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "owner_city": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "owner_country_code": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "owner_house_number": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "owner_zip": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "qr_invoice_iban": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "remarks": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "type": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "uuid": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "type": "object"
+}

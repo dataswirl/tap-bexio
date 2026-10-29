@@ -1,0 +1,42 @@
+{
+  "properties": {
+    "comment": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "end_date": {
+      "format": "date",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "name": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "parent_milestone_id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "project_id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    }
+  },
+  "type": "object"
+}

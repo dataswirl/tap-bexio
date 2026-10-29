@@ -1,0 +1,159 @@
+{
+  "properties": {
+    "booking_type": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "created_by_user_id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "date": {
+      "format": "date",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "edited_by_user_id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "entries": {
+      "items": {
+        "properties": {
+          "amount": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "base_currency_amount": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "base_currency_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "created_by_user_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "credit_account_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "currency_factor": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "currency_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "date": {
+            "format": "date",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "debit_account_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "description": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "edited_by_user_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "tax_account_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "tax_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          }
+        },
+        "type": [
+          "object",
+          "null"
+        ]
+      },
+      "type": [
+        "array",
+        "null"
+      ]
+    },
+    "id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "is_locked": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "locked_info": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "reference_nr": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "type": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "type": "object"
+}

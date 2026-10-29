@@ -1,0 +1,23 @@
+{
+  "properties": {
+    "id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "name": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "uuid": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "type": "object"
+}

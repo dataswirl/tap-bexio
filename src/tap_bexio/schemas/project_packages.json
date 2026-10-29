@@ -1,0 +1,53 @@
+{
+  "properties": {
+    "comment": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "estimated_time_in_hours": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "milestone": {
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "milestone_id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "name": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "project_id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "spent_time_in_hours": {
+      "type": [
+        "number",
+        "null"
+      ]
+    }
+  },
+  "type": "object"
+}

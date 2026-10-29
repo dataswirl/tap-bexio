@@ -1,0 +1,18 @@
+{
+  "properties": {
+    "components": {
+      "items": {},
+      "type": [
+        "array",
+        "null"
+      ]
+    },
+    "permissions": {
+      "type": [
+        "object",
+        "null"
+      ]
+    }
+  },
+  "type": "object"
+}

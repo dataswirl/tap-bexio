@@ -1,0 +1,47 @@
+{
+  "properties": {
+    "account_no": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "is_active": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "is_locked": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "name": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "parent_fibu_account_group_id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "uuid": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "type": "object"
+}

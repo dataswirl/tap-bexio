@@ -1,0 +1,83 @@
+{
+  "properties": {
+    "address": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "address_addition": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "city": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "contact_id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "country_id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "description": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "house_number": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "name": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "name_addition": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "postcode": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "street_name": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "subject": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "type": "object"
+}

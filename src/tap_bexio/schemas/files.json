@@ -1,0 +1,96 @@
+{
+  "properties": {
+    "created_at": {
+      "format": "date-time",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "extension": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "is_archived": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "is_referenced": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "mime_type": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "name": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "processing_source": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "processing_status": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "size_in_bytes": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "source_id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "source_type": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "uploader_email": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "user_id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "uuid": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "type": "object"
+}

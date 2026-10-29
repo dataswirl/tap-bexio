@@ -1,0 +1,47 @@
+{
+  "properties": {
+    "email": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "firstname": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "is_accountant": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "is_superadmin": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "lastname": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "salutation_type": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "type": "object"
+}

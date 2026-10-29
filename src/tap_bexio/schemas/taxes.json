@@ -1,0 +1,101 @@
+{
+  "properties": {
+    "account_id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "code": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "digit": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "display_name": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "end_month": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "end_year": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "is_active": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "name": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "net_tax_value": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "start_month": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "start_year": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "tax_settlement_type": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "type": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "uuid": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "value": {
+      "type": [
+        "number",
+        "null"
+      ]
+    }
+  },
+  "type": "object"
+}

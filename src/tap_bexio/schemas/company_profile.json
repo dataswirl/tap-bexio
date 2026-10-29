@@ -1,0 +1,197 @@
+{
+  "properties": {
+    "address": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "address_nr": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "city": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "country_id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "country_name": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "description": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "facebook_name": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "fax": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "has_own_logo": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "is_address_public": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "is_fax_public": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "is_logo_public": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "is_mail_public": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "is_mobile_public": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "is_phone_public": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "is_public_profile": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "is_skype_public": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "is_url_public": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "legal_form": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "logo_base64": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "mail": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "mwst_nr": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "name": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "phone_fixed": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "phone_mobile": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "postcode": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "skype_name": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "trade_register_nr": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "twitter_name": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "url": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "ust_id_nr": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "type": "object"
+}

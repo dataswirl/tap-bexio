@@ -1,0 +1,239 @@
+{
+  "properties": {
+    "account_id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "article_group_id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "article_type_id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "contact_id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "currency_id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "deliverer_code": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "deliverer_description": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "deliverer_name": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "delivery_price": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "expense_account_id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "height": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "html_text": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "intern_code": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "intern_description": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "intern_name": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "is_stock": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "purchase_price": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "purchase_total": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "remarks": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "sale_price": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "sale_total": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "stock_available_nr": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "stock_disposed_nr": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "stock_id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "stock_min_nr": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "stock_nr": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "stock_ordered_nr": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "stock_picked_nr": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "stock_place_id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "stock_reserved_nr": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "tax_expense_id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "tax_id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "tax_income_id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "unit_id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "user_id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "volume": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "weight": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "width": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    }
+  },
+  "type": "object"
+}

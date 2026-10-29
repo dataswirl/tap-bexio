@@ -1,0 +1,76 @@
+send_anonymous_usage_stats: false
+project_id: tap-bexio
+default_environment: dev
+environments:
+  - name: dev
+plugins:
+  extractors:
+    - name: tap-bexio
+      namespace: tap_bexio
+      repo: https://github.com/dataswirl/tap-bexio
+      pip_url: -e .
+      capabilities:
+        - state
+        - catalog
+        - discover
+        - about
+        - stream-maps
+        - structured-logging
+
+      settings:
+        - name: auth_token
+          kind: string
+          label: Access Token
+          description: Bexio Personal Access Token or OAuth access token
+          sensitive: true
+
+        - name: start_date
+          kind: date_iso8601
+          label: Start Date
+          description: >-
+            Earliest updated_at to sync for incremental streams, and lower bound for the
+            journal and payroll absences. Without it, the first sync reads everything
+
+        - name: api_url
+          kind: string
+          label: API URL
+          description: Base URL of the Bexio API
+          value: https://api.bexio.com
+
+        - name: user_agent
+          kind: string
+          label: User Agent
+          description: Optional User-Agent header sent with every request
+
+        - name: page_size
+          kind: integer
+          label: Page Size
+          description: Records per request (capped per endpoint; 2000 max)
+          value: 500
+
+        - name: timezone
+          kind: string
+          label: Timezone
+          description: IANA timezone of Bexio's offset-less timestamps (company timezone)
+          value: Europe/Zurich
+
+        - name: forbidden_stream_behavior
+          kind: options
+          label: Forbidden Stream Behavior
+          description: >-
+            What to do when Bexio answers 403 (missing scope or inactive module): skip logs
+            a warning and continues, fail stops the sync
+          value: skip
+          options:
+            - label: Skip stream
+              value: skip
+            - label: Fail sync
+              value: fail
+
+      settings_group_validation:
+        - [auth_token]
+
+  loaders:
+    - name: target-jsonl
+      variant: andyh1203
+      pip_url: target-jsonl
