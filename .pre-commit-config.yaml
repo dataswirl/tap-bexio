@@ -2,17 +2,29 @@ repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v6.0.0
     hooks:
+      - id: check-json
+      - id: check-toml
+      - id: check-yaml
       - id: end-of-file-fixer
       - id: trailing-whitespace
-  - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.17.0
+  - repo: https://github.com/google/yamlfmt
+    rev: v0.21.0
     hooks:
-      - id: ruff-check
-        args: [--fix]
-      - id: ruff-format
+      - id: yamlfmt
   - repo: local
     hooks:
-      # Runs the ty version locked in uv.lock, in the project environment, so imports resolve.
+      - id: ruff-check
+        name: ruff check
+        entry: uv run --frozen ruff check --fix --force-exclude
+        language: system
+        types_or: [python, pyi]
+        require_serial: true
+      - id: ruff-format
+        name: ruff format
+        entry: uv run --frozen ruff format --force-exclude
+        language: system
+        types_or: [python, pyi]
+        require_serial: true
       - id: ty
         name: ty check
         entry: uv run --frozen ty check

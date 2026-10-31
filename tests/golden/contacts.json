@@ -1,0 +1,468 @@
+[
+ {
+  "bookmark_properties": [
+   "updated_at"
+  ],
+  "key_properties": [
+   "id"
+  ],
+  "schema": {
+   "properties": {
+    "address": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "address_addition": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "archived": {
+     "type": [
+      "boolean",
+      "null"
+     ]
+    },
+    "birthday": {
+     "format": "date",
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "city": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "contact_branch_ids": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "contact_group_ids": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "contact_type_id": {
+     "type": [
+      "integer",
+      "null"
+     ]
+    },
+    "country_id": {
+     "type": [
+      "integer",
+      "null"
+     ]
+    },
+    "fax": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "house_number": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "id": {
+     "type": [
+      "integer",
+      "null"
+     ]
+    },
+    "is_lead": {
+     "type": [
+      "boolean",
+      "null"
+     ]
+    },
+    "language_id": {
+     "type": [
+      "integer",
+      "null"
+     ]
+    },
+    "mail": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "mail_second": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "name_1": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "name_2": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "nr": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "owner_id": {
+     "type": [
+      "integer",
+      "null"
+     ]
+    },
+    "phone_fixed": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "phone_fixed_second": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "phone_mobile": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "postcode": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "remarks": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "salutation_form": {
+     "type": [
+      "integer",
+      "null"
+     ]
+    },
+    "salutation_id": {
+     "type": [
+      "integer",
+      "null"
+     ]
+    },
+    "skype_name": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "street_name": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "title_id": {
+     "type": [
+      "integer",
+      "null"
+     ]
+    },
+    "updated_at": {
+     "format": "date-time",
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "url": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "user_id": {
+     "type": [
+      "integer",
+      "null"
+     ]
+    }
+   },
+   "type": "object"
+  },
+  "stream": "contacts",
+  "type": "SCHEMA"
+ },
+ {
+  "key_properties": [
+   "id"
+  ],
+  "schema": {
+   "properties": {
+    "address": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "address_addition": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "city": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "contact_id": {
+     "type": [
+      "integer",
+      "null"
+     ]
+    },
+    "country_id": {
+     "type": [
+      "integer",
+      "null"
+     ]
+    },
+    "description": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "house_number": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "id": {
+     "type": [
+      "integer",
+      "null"
+     ]
+    },
+    "name": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "name_addition": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "postcode": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "street_name": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "subject": {
+     "type": [
+      "string",
+      "null"
+     ]
+    }
+   },
+   "type": "object"
+  },
+  "stream": "contact_additional_addresses",
+  "type": "SCHEMA"
+ },
+ {
+  "record": {
+   "contact_id": 1,
+   "id": 5
+  },
+  "stream": "contact_additional_addresses",
+  "type": "RECORD"
+ },
+ {
+  "type": "STATE",
+  "value": {
+   "bookmarks": {
+    "contact_additional_addresses": {},
+    "contacts": {
+     "partitions": [
+      {
+       "context": {
+        "archived": false
+       },
+       "starting_replication_value": null
+      }
+     ],
+     "replication_key_signpost": "<now>"
+    }
+   }
+  }
+ },
+ {
+  "record": {
+   "archived": false,
+   "id": 1,
+   "updated_at": "2024-01-01T12:00:00+01:00"
+  },
+  "stream": "contacts",
+  "type": "RECORD"
+ },
+ {
+  "key_properties": [
+   "id"
+  ],
+  "schema": {
+   "properties": {
+    "address": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "address_addition": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "city": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "contact_id": {
+     "type": [
+      "integer",
+      "null"
+     ]
+    },
+    "country_id": {
+     "type": [
+      "integer",
+      "null"
+     ]
+    },
+    "description": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "house_number": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "id": {
+     "type": [
+      "integer",
+      "null"
+     ]
+    },
+    "name": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "name_addition": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "postcode": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "street_name": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "subject": {
+     "type": [
+      "string",
+      "null"
+     ]
+    }
+   },
+   "type": "object"
+  },
+  "stream": "contact_additional_addresses",
+  "type": "SCHEMA"
+ },
+ {
+  "record": {
+   "archived": true,
+   "id": 2,
+   "updated_at": "2024-06-01T12:00:00+02:00"
+  },
+  "stream": "contacts",
+  "type": "RECORD"
+ },
+ {
+  "type": "STATE",
+  "value": {
+   "bookmarks": {
+    "contact_additional_addresses": {},
+    "contacts": {
+     "partitions": [
+      {
+       "context": {
+        "archived": false
+       },
+       "replication_key": "updated_at",
+       "replication_key_value": "2024-01-01T12:00:00+01:00"
+      },
+      {
+       "context": {
+        "archived": true
+       },
+       "replication_key": "updated_at",
+       "replication_key_value": "2024-06-01T12:00:00+02:00"
+      }
+     ]
+    }
+   }
+  }
+ }
+]

@@ -7,6 +7,7 @@
       ]
     },
     "exchange_rate_date": {
+      "format": "date",
       "type": [
         "string",
         "null"

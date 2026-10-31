@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from tap_bexio.client import BexioOffsetStream, BexioStream, BexioUnpagedStream
+from tap_bexio.client import BexioOffsetStream, BexioUnpagedStream
 
 
 class ProjectsStream(BexioOffsetStream):
@@ -33,7 +33,6 @@ class ProjectMilestonesStream(BexioOffsetStream):
     name = "project_milestones"
     path = "/3.0/projects/{project_id}/milestones"
     parent_stream_type = ProjectsStream
-    state_partitioning_keys = ()
 
 
 class ProjectPackagesStream(BexioOffsetStream):
@@ -42,7 +41,6 @@ class ProjectPackagesStream(BexioOffsetStream):
     name = "project_packages"
     path = "/3.0/projects/{project_id}/packages"
     parent_stream_type = ProjectsStream
-    state_partitioning_keys = ()
 
 
 class TimesheetsStream(BexioOffsetStream):
@@ -99,20 +97,3 @@ class CommunicationTypesStream(BexioOffsetStream):
 
     name = "communication_types"
     path = "/2.0/communication_kind"
-
-
-STREAMS: list[type[BexioStream]] = [
-    ProjectsStream,
-    ProjectStatesStream,
-    ProjectTypesStream,
-    ProjectMilestonesStream,
-    ProjectPackagesStream,
-    TimesheetsStream,
-    TimesheetStatusesStream,
-    BusinessActivitiesStream,
-    TasksStream,
-    TaskPrioritiesStream,
-    TaskStatusesStream,
-    NotesStream,
-    CommunicationTypesStream,
-]

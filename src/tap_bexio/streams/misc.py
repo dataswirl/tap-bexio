@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import typing as t
 
-from tap_bexio.client import BexioOffsetStream, BexioStream, BexioUnpagedStream
+from tap_bexio.client import BexioOffsetStream, BexioUnpagedStream
 
 
 class UsersStream(BexioOffsetStream):
@@ -58,14 +58,3 @@ class FilesStream(BexioOffsetStream):
     path = "/3.0/files"
     send_limit = False
     extra_params: t.ClassVar[dict[str, t.Any]] = {"archived_state": "all"}
-
-
-STREAMS: list[type[BexioStream]] = [
-    UsersStream,
-    FictionalUsersStream,
-    CompanyProfileStream,
-    PermissionsStream,
-    CountriesStream,
-    LanguagesStream,
-    FilesStream,
-]

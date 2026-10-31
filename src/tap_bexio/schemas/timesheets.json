@@ -113,12 +113,14 @@
           ]
         },
         "end": {
+          "format": "date-time",
           "type": [
             "string",
             "null"
           ]
         },
         "start": {
+          "format": "date-time",
           "type": [
             "string",
             "null"

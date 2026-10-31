@@ -2,20 +2,11 @@
 
 from __future__ import annotations
 
-import json
-
 import pytest
-import requests
 
 from tap_bexio.pagination import BexioOffsetPaginator, BexioPagePaginator
 
-
-def make_response(body: object, headers: dict[str, str] | None = None) -> requests.Response:
-    response = requests.Response()
-    response.status_code = 200
-    response._content = json.dumps(body).encode()  # noqa: SLF001
-    response.headers.update(headers or {})
-    return response
+from .conftest import make_response
 
 
 @pytest.mark.parametrize(
@@ -27,11 +18,13 @@ def make_response(body: object, headers: dict[str, str] | None = None) -> reques
         (2, 2, {"X-Total-Count": "5"}, 2),
         (None, 3, {}, 3),  # no limit: continue while rows come back
         (None, 0, {}, None),
+        (2, 0, {"X-Total-Count": "5"}, None),  # empty page although the header says more
+        (None, 3, {"X-Total-Count": "3"}, None),
     ],
 )
 def test_offset_paginator(page_size, rows, headers, expected):
     paginator = BexioOffsetPaginator(page_size)
-    assert paginator.get_next(make_response([{}] * rows, headers)) == expected
+    assert paginator.get_next(make_response([{}] * rows, headers=headers)) == expected
 
 
 def test_offset_paginator_stops_on_repeated_page():
@@ -43,17 +36,20 @@ def test_offset_paginator_stops_on_repeated_page():
 
 
 @pytest.mark.parametrize(
-    ("body", "headers", "first_page", "current", "expected"),
+    ("body", "headers", "first_page", "expected"),
     [
-        ({"data": [{}], "paging": {"page": 1, "page_count": 3}}, {}, 1, 1, 2),
-        ({"data": [{}], "paging": {"page": 3, "page_count": 3}}, {}, 1, 3, None),
-        ([{}, {}], {"X-Total-Count": "5"}, 0, 0, 1),  # 0-based pages, 2 of 5 read
-        ([{}, {}], {}, 1, 1, 2),
-        ([{}], {}, 1, 1, None),
+        ({"data": [{}], "paging": {"page": 1, "page_count": 3}}, {}, 1, 2),
+        ({"data": [{}], "paging": {"page": 3, "page_count": 3}}, {}, 1, None),
+        ([{}, {}], {"X-Total-Count": "5"}, 0, 1),  # 0-based pages, 2 of 5 read
+        ([{}, {}], {}, 1, 2),
+        ([{}], {}, 1, None),
+        ([], {"X-Total-Count": "5"}, 1, None),  # empty page although the header says more
+        ({"data": [{}], "paging": {"page_count": 2}}, {}, 1, 2),  # page defaults to current
+        ({"paging": {"page": 1}, "data": [{}, {}]}, {}, 1, 2),  # no page_count: count rows
+        ({"pagination": {"max-results": 5}, "results": [{}]}, {}, 1, 2),  # per-page = size
         (
             {"pagination": {"page": 1, "per-page": 2, "max-results": 5}, "results": [{}]},
             {},
-            1,
             1,
             2,
         ),
@@ -61,22 +57,19 @@ def test_offset_paginator_stops_on_repeated_page():
             {"pagination": {"page": 3, "per-page": 2, "max-results": 5}, "results": [{}]},
             {},
             1,
-            3,
             None,
         ),
         (
             {"pagination": {"page": 1, "per-page": 2, "max-results": 0}, "results": []},
             {},
             1,
-            1,
             None,
         ),
     ],
 )
-def test_page_paginator(body, headers, first_page, current, expected):
+def test_page_paginator(body, headers, first_page, expected):
     paginator = BexioPagePaginator(page_size=2, first_page=first_page)
-    paginator._value = current  # noqa: SLF001
-    assert paginator.get_next(make_response(body, headers)) == expected
+    assert paginator.get_next(make_response(body, headers=headers)) == expected
 
 
 @pytest.mark.parametrize(
@@ -90,6 +83,6 @@ def test_page_paginator_total_count(page_size, pages):
     paginator = BexioPagePaginator(page_size=page_size, first_page=0)
     for rows in pages:
         assert not paginator.finished
-        paginator.advance(make_response([{}] * rows, {"X-Total-Count": "5"}))
+        paginator.advance(make_response([{}] * rows, headers={"X-Total-Count": "5"}))
     assert paginator.finished
     assert paginator.current_value == len(pages) - 1

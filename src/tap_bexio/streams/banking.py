@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from tap_bexio.client import BexioOffsetStream, BexioPageStream, BexioStream
+from tap_bexio.client import BexioOffsetStream, BexioPageStream
 
 
 class BankAccountsStream(BexioOffsetStream):
@@ -31,10 +31,3 @@ class PaymentTypesStream(BexioOffsetStream):
 
     name = "payment_types"
     path = "/2.0/payment_type"
-
-
-STREAMS: list[type[BexioStream]] = [
-    BankAccountsStream,
-    PaymentsStream,
-    PaymentTypesStream,
-]

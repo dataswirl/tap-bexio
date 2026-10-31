@@ -2,9 +2,11 @@
 
 from __future__ import annotations
 
+import json
 import typing as t
 
 import pytest
+import requests
 import responses
 
 from tap_bexio.client import BexioStream
@@ -30,3 +32,14 @@ def make_tap() -> t.Callable[..., TapBexio]:
 def mocked() -> t.Iterator[responses.RequestsMock]:
     with responses.RequestsMock() as rsps:
         yield rsps
+
+
+def make_response(
+    body: object, *, status: int = 200, headers: dict[str, str] | None = None
+) -> requests.Response:
+    """Return a response as the SDK would hand it to a paginator or validator."""
+    response = requests.Response()
+    response.status_code = status
+    response._content = json.dumps(body).encode()  # noqa: SLF001
+    response.headers.update(headers or {})
+    return response

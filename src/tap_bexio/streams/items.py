@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from tap_bexio.client import BexioOffsetStream, BexioStream
+from tap_bexio.client import BexioOffsetStream
 
 
 class ArticlesStream(BexioOffsetStream):
@@ -31,11 +31,3 @@ class UnitsStream(BexioOffsetStream):
 
     name = "units"
     path = "/2.0/unit"
-
-
-STREAMS: list[type[BexioStream]] = [
-    ArticlesStream,
-    StockLocationsStream,
-    StockAreasStream,
-    UnitsStream,
-]

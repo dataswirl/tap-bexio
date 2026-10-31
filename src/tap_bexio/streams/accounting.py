@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import typing as t
 
-from tap_bexio.client import BexioOffsetStream, BexioStream, BexioUnpagedStream
+from tap_bexio.client import BexioOffsetStream, BexioUnpagedStream
 
 if t.TYPE_CHECKING:
     from singer_sdk.helpers.types import Context, Record
@@ -37,8 +37,8 @@ class JournalStream(BexioOffsetStream):
     ) -> dict[str, t.Any]:
         """Limit bookings to ``start_date`` onwards."""
         params = super().get_url_params(context, next_page_token)
-        if start_date := self.config.get("start_date"):
-            params["from"] = str(start_date)[:10]
+        if start_date := self.settings.start_date:
+            params["from"] = start_date.date().isoformat()
         return params
 
 
@@ -54,9 +54,8 @@ class ManualEntryFilesStream(BexioOffsetStream):
     """Files attached to a manual entry."""
 
     name = "manual_entry_files"
-    path = "/3.0/accounting/manual_entries/{manual_entry_id}/files"
+    path = ManualEntriesStream.path + "/{manual_entry_id}/files"
     parent_stream_type = ManualEntriesStream
-    state_partitioning_keys = ()
 
 
 class BusinessYearsStream(BexioOffsetStream):
@@ -100,27 +99,11 @@ class CurrencyExchangeRatesStream(BexioUnpagedStream):
     """Current exchange rates of a currency against the other currencies."""
 
     name = "currency_exchange_rates"
-    path = "/3.0/currencies/{currency_id}/exchange_rates"
+    path = CurrenciesStream.path + "/{currency_id}/exchange_rates"
     primary_keys = ("currency_id", "exchange_currency_id")
     parent_stream_type = CurrenciesStream
-    state_partitioning_keys = ()
 
     def post_process(self, row: Record, context: Context | None = None) -> Record | None:
         """Lift the exchange currency id to the top level for the primary key."""
         row["exchange_currency_id"] = (row.get("exchange_currency") or {}).get("id")
         return super().post_process(row, context)
-
-
-STREAMS: list[type[BexioStream]] = [
-    AccountsStream,
-    AccountGroupsStream,
-    JournalStream,
-    ManualEntriesStream,
-    ManualEntryFilesStream,
-    BusinessYearsStream,
-    CalendarYearsStream,
-    VatPeriodsStream,
-    TaxesStream,
-    CurrenciesStream,
-    CurrencyExchangeRatesStream,
-]

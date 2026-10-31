@@ -5,7 +5,7 @@ from __future__ import annotations
 import datetime as dt
 import typing as t
 
-from tap_bexio.client import BexioStream, BexioUnpagedStream
+from tap_bexio.client import BexioUnpagedStream
 
 if t.TYPE_CHECKING:
     from collections.abc import Iterable
@@ -16,16 +16,21 @@ if t.TYPE_CHECKING:
 DEFAULT_ABSENCE_YEARS = 2
 
 
-class PayrollEmployeesStream(BexioUnpagedStream):
+class _PayrollStream(BexioUnpagedStream):
+    """4.0 payroll endpoint: unpaged, records under ``data``."""
+
+    records_jsonpath = "$.data[*]"
+
+
+class PayrollEmployeesStream(_PayrollStream):
     """Payroll employees."""
 
     name = "payroll_employees"
     path = "/4.0/payroll/employees"
-    records_jsonpath = "$.data[*]"
     child_context_key = "employee_id"
 
 
-class PayrollAbsencesStream(BexioUnpagedStream):
+class PayrollAbsencesStream(_PayrollStream):
     """Absences of an employee, one request per business year.
 
     Years run from the ``start_date`` year (or the last ``DEFAULT_ABSENCE_YEARS`` years)
@@ -33,20 +38,14 @@ class PayrollAbsencesStream(BexioUnpagedStream):
     """
 
     name = "payroll_absences"
-    path = "/4.0/payroll/employees/{employee_id}/absences"
-    records_jsonpath = "$.data[*]"
+    path = PayrollEmployeesStream.path + "/{employee_id}/absences"
     parent_stream_type = PayrollEmployeesStream
-    state_partitioning_keys = ()
-
-    def _business_years(self) -> range:
-        current = dt.datetime.now(tz=self.timezone).year
-        start_date = self.config.get("start_date")
-        first = int(str(start_date)[:4]) if start_date else current - DEFAULT_ABSENCE_YEARS + 1
-        return range(first, current + 1)
 
     def get_records(self, context: Context | None) -> Iterable[dict[str, t.Any]]:
         """Read absences for every business year in range."""
-        for year in self._business_years():
+        today = dt.datetime.now(tz=self.timezone).date()
+        start_date = self.settings.start_date
+        for year in business_years(today, start_date.date() if start_date else None):
             # post_process runs later with the partition context, so set the year here.
             for row in super().get_records({**(context or {}), "business_year": year}):
                 row["business_year"] = year
@@ -63,7 +62,7 @@ class PayrollAbsencesStream(BexioUnpagedStream):
         return params
 
 
-STREAMS: list[type[BexioStream]] = [
-    PayrollEmployeesStream,
-    PayrollAbsencesStream,
-]
+def business_years(today: dt.date, start: dt.date | None) -> range:
+    """Return the business years from ``start`` (or the last ``DEFAULT_ABSENCE_YEARS``) to now."""
+    first = start.year if start else today.year - DEFAULT_ABSENCE_YEARS + 1
+    return range(first, today.year + 1)

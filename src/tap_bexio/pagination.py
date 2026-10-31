@@ -52,18 +52,26 @@ class BexioOffsetPaginator(BaseAPIPaginator[int]):
 
     def get_next(self, response: requests.Response) -> int | None:  # noqa: D102
         records = _page_records(response)
-        first_id = records[0].get("id") if records and isinstance(records[0], dict) else None
-        if first_id is not None and first_id == self._first_id:
+        if self._repeats(records):
             return None
-        self._first_id = first_id
         received = len(records)
         next_offset = self.current_value + received
+        return next_offset if received and self._more(received, next_offset, response) else None
+
+    def _repeats(self, records: list[t.Any]) -> bool:
+        """Return whether the page starts with the previous page's first ID, and remember it."""
+        first = records[0] if records else None
+        first_id = first.get("id") if isinstance(first, dict) else None
+        repeated = first_id is not None and first_id == self._first_id
+        self._first_id = first_id
+        return repeated
+
+    def _more(self, received: int, next_offset: int, response: requests.Response) -> bool:
+        """Return whether records remain after a non-empty page."""
         total = _total_count(response)
         if total is not None:
-            return next_offset if received and next_offset < total else None
-        if self.page_size is None:
-            return next_offset if received else None
-        return next_offset if received >= self.page_size else None
+            return next_offset < total
+        return self.page_size is None or received >= self.page_size
 
 
 class BexioPagePaginator(BaseAPIPaginator[int]):
@@ -84,18 +92,29 @@ class BexioPagePaginator(BaseAPIPaginator[int]):
 
     def get_next(self, response: requests.Response) -> int | None:  # noqa: D102
         body = response.json()
-        paging = body.get("paging") if isinstance(body, dict) else None
-        if isinstance(paging, dict) and "page_count" in paging:
+        if paging := _section(body, "paging", "page_count"):
             page = int(paging.get("page", self.current_value))
-            return page + 1 if page < int(paging["page_count"]) else None
-        pagination = body.get("pagination") if isinstance(body, dict) else None
-        if isinstance(pagination, dict) and "max-results" in pagination:
+            return _next_page(page, more=page < int(paging["page_count"]))
+        if pagination := _section(body, "pagination", "max-results"):
             page = int(pagination.get("page", self.current_value))
             per_page = int(pagination.get("per-page", self.page_size))
-            return page + 1 if page * per_page < int(pagination["max-results"]) else None
+            return _next_page(page, more=page * per_page < int(pagination["max-results"]))
+        return self._next_by_count(response)
+
+    def _next_by_count(self, response: requests.Response) -> int | None:
+        """Continue while ``X-Total-Count`` says more remain, else while pages are full."""
         received = len(_page_records(response))
         self._received += received
         total = _total_count(response)
-        if total is not None:
-            return self.current_value + 1 if received and self._received < total else None
-        return self.current_value + 1 if received >= self.page_size else None
+        more = self._received < total if total is not None else received >= self.page_size
+        return _next_page(self.current_value, more=received > 0 and more)
+
+
+def _section(body: t.Any, key: str, required: str) -> dict[str, t.Any] | None:  # noqa: ANN401
+    """Return ``body[key]`` when it is an object holding ``required``."""
+    section = body.get(key) if isinstance(body, dict) else None
+    return section if isinstance(section, dict) and required in section else None
+
+
+def _next_page(page: int, *, more: bool) -> int | None:
+    return page + 1 if more else None

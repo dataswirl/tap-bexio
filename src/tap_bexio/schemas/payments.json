@@ -19,6 +19,7 @@
       ]
     },
     "created_at": {
+      "format": "date-time",
       "type": [
         "string",
         "null"

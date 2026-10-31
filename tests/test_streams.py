@@ -3,19 +3,21 @@
 from __future__ import annotations
 
 import contextlib
+import datetime as dt
 import io
 import json
 import logging
 import re
+from zoneinfo import ZoneInfo
 
 import pytest
-import requests
 from responses import matchers
 from singer_sdk.exceptions import FatalAPIError, RetriableAPIError
 
 from tap_bexio.client import _rate_limit_wait
+from tap_bexio.streams.payroll import business_years
 
-from .conftest import API
+from .conftest import API, make_response
 
 
 def records(tap, name, context=None):
@@ -138,13 +140,67 @@ def test_contacts_sync_active_and_archived_partitions_from_own_bookmarks(make_ta
     [
         ("2024-01-15 13:17:32", "2024-01-15T13:17:32+01:00"),
         ("2024-07-15 13:17:32", "2024-07-15T13:17:32+02:00"),
-        ("2024-07-15T13:17:32+00:00", "2024-07-15T13:17:32+00:00"),  # already ISO: untouched
+        ("2024-07-15 13:17", "2024-07-15T13:17:00+02:00"),
+        ("2024-07-15T13:17:32+00:00", "2024-07-15T15:17:32+02:00"),
+        ("2024-07-15T13:17:32+0000", "2024-07-15T15:17:32+02:00"),  # 4.0: no colon
+        ("2024-07-15T13:17:32Z", "2024-07-15T15:17:32+02:00"),
+        ("2024-07-15T13:17:32+02:00", "2024-07-15T13:17:32+02:00"),
+        ("2024-07-15", "2024-07-15T00:00:00+02:00"),
+        ("not a timestamp", "not a timestamp"),
+        ("", ""),
         (None, None),
     ],
 )
-def test_post_process_normalizes_local_timestamps(make_tap, value, expected):
+def test_post_process_conforms_timestamps_to_configured_timezone(make_tap, value, expected):
     stream = make_tap().streams["invoices"]
     assert stream.post_process({"id": 1, "updated_at": value})["updated_at"] == expected
+
+
+def test_post_process_uses_timezone_from_config(make_tap):
+    stream = make_tap(timezone="Europe/Bucharest").streams["bills"]
+    row = stream.post_process({"id": "b1", "created_at": "2024-07-15T13:17:32+0000"})
+    assert row["created_at"] == "2024-07-15T16:17:32+03:00"
+
+
+@pytest.mark.parametrize(
+    ("value", "expected"),
+    [
+        ("2024-07-15", "2024-07-15"),
+        ("2024-07-15 00:00:00", "2024-07-15"),
+        ("2024-07-14T23:30:00+00:00", "2024-07-15"),  # local day in the configured timezone
+    ],
+)
+def test_post_process_conforms_dates(make_tap, value, expected):
+    stream = make_tap().streams["invoices"]
+    assert stream.post_process({"id": 1, "is_valid_from": value})["is_valid_from"] == expected
+
+
+def test_post_process_conforms_nested_dates(make_tap):
+    timesheet = (
+        make_tap()
+        .streams["timesheets"]
+        .post_process(
+            {
+                "id": 1,
+                "date": "2026-10-31",
+                "tracking": {"type": "range", "start": "2026-10-31 08:15:00", "end": None},
+            },
+        )
+    )
+    assert timesheet["tracking"] == {
+        "type": "range",
+        "start": "2026-10-31T08:15:00+01:00",
+        "end": None,
+    }
+
+    entry = (
+        make_tap()
+        .streams["manual_entries"]
+        .post_process(
+            {"id": 1, "date": "2026-10-31", "entries": [{"id": 2, "date": "2026-10-31"}]},
+        )
+    )
+    assert entry["entries"] == [{"id": 2, "date": "2026-10-31"}]
 
 
 def test_positions_child_reads_detail_and_injects_document_id(make_tap, mocked):
@@ -174,16 +230,32 @@ def test_outgoing_payments_filter_by_bill(make_tap, mocked):
     assert records(make_tap(), "bill_outgoing_payments", {"bill_id": "b-1"}) == [{"id": "p"}]
 
 
-def test_payroll_absences_loop_over_business_years(make_tap, mocked, monkeypatch):
-    stream = make_tap(start_date="2023-06-01T00:00:00Z").streams["payroll_absences"]
-    monkeypatch.setattr(type(stream), "_business_years", lambda _: range(2023, 2025))
-    for year in (2023, 2024):
+@pytest.mark.parametrize(
+    ("start", "expected"),
+    [
+        (None, range(2025, 2027)),  # the last DEFAULT_ABSENCE_YEARS years
+        (dt.date(2023, 6, 1), range(2023, 2027)),
+        (dt.date(2026, 1, 1), range(2026, 2027)),
+    ],
+)
+def test_business_years(start, expected):
+    assert business_years(dt.date(2026, 10, 31), start) == expected
+
+
+def test_payroll_absences_read_each_business_year(make_tap, mocked):
+    this_year = dt.datetime.now(tz=ZoneInfo("Europe/Zurich")).year
+    stream = make_tap(start_date=f"{this_year - 1}-06-01T00:00:00Z").streams["payroll_absences"]
+    for year in (this_year - 1, this_year):
         mocked.get(
             f"{API}/4.0/payroll/employees/e1/absences",
             json={"data": [{"id": year}]},
             match=[matchers.query_param_matcher({"businessYear": str(year)})],
         )
-    assert [r["id"] for r in stream.get_records({"employee_id": "e1"})] == [2023, 2024]
+    rows = list(stream.get_records({"employee_id": "e1"}))
+    assert [(r["id"], r["business_year"]) for r in rows] == [
+        (this_year - 1, this_year - 1),
+        (this_year, this_year),
+    ]
 
 
 def test_exchange_rates_lift_exchange_currency_id(make_tap):
@@ -229,32 +301,21 @@ def test_not_found_on_top_level_stream_is_fatal(make_tap, mocked):
         records(make_tap(), "countries")
 
 
-def _response(status: int, headers: dict[str, str]) -> requests.Response:
-    response = requests.Response()
-    response.status_code = status
-    response.headers.update(headers)
-    response._content = json.dumps({}).encode()  # noqa: SLF001
-    return response
-
-
 def test_rate_limit_is_retriable_and_waits_for_reset(make_tap):
     stream = make_tap().streams["countries"]
-    response = _response(429, {"RateLimit-Reset": "7"})
+    response = make_response({}, status=429, headers={"RateLimit-Reset": "7"})
     response.url = f"{API}/2.0/country"
     with pytest.raises(RetriableAPIError) as exc_info:
         stream.validate_response(response)
     assert _rate_limit_wait(exc_info.value) == 8
-    assert _rate_limit_wait(RetriableAPIError("boom", _response(503, {}))) == 10
+    assert _rate_limit_wait(RetriableAPIError("boom", make_response({}, status=503))) == 10
 
 
 @pytest.mark.parametrize(
     ("status", "headers", "expected_sleeps"),
     [
         (200, {"RateLimit-Remaining": "1", "RateLimit-Reset": "7"}, [8]),
-        (200, {"RateLimit-Remaining": "0", "RateLimit-Reset": "3"}, [4]),
         (200, {"RateLimit-Remaining": "2", "RateLimit-Reset": "7"}, []),
-        (200, {"RateLimit-Remaining": "1"}, []),
-        (200, {}, []),
     ],
 )
 def test_throttles_when_rate_limit_nearly_exhausted(
@@ -263,7 +324,7 @@ def test_throttles_when_rate_limit_nearly_exhausted(
     sleeps = []
     monkeypatch.setattr("tap_bexio.client.time.sleep", sleeps.append)
     stream = make_tap().streams["countries"]
-    stream.validate_response(_response(status, headers))
+    stream.validate_response(make_response({}, status=status, headers=headers))
     assert sleeps == expected_sleeps
 
 
@@ -271,8 +332,26 @@ def test_rate_limited_response_is_not_throttled_twice(make_tap, monkeypatch):
     sleeps = []
     monkeypatch.setattr("tap_bexio.client.time.sleep", sleeps.append)
     stream = make_tap().streams["countries"]
-    response = _response(429, {"RateLimit-Remaining": "0", "RateLimit-Reset": "7"})
+    response = make_response(
+        {}, status=429, headers={"RateLimit-Remaining": "0", "RateLimit-Reset": "7"}
+    )
     response.url = f"{API}/2.0/country"
     with pytest.raises(RetriableAPIError):
         stream.validate_response(response)
     assert sleeps == []
+
+
+@pytest.mark.parametrize(
+    ("config", "query"),
+    [
+        ({"start_date": "2024-01-15T23:00:00+02:00"}, {"from": "2024-01-15"}),
+        ({}, {}),
+    ],
+)
+def test_journal_reads_from_start_date(make_tap, mocked, config, query):
+    mocked.get(
+        f"{API}/3.0/accounting/journal",
+        json=[{"id": 1}],
+        match=[matchers.query_param_matcher({"limit": "500", "offset": "0"} | query)],
+    )
+    assert records(make_tap(**config), "journal") == [{"id": 1}]

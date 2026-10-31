@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import typing as t
 
-from tap_bexio.client import BexioOffsetStream, BexioSearchStream, BexioStream
+from tap_bexio.client import BexioOffsetStream, BexioSearchStream
 
 if t.TYPE_CHECKING:
     from singer_sdk.helpers.types import Context
@@ -84,18 +84,5 @@ class ContactAdditionalAddressesStream(BexioOffsetStream):
     """Additional addresses of a contact."""
 
     name = "contact_additional_addresses"
-    path = "/2.0/contact/{contact_id}/additional_address"
+    path = ContactsStream.path + "/{contact_id}/additional_address"
     parent_stream_type = ContactsStream
-    state_partitioning_keys = ()
-
-
-STREAMS: list[type[BexioStream]] = [
-    ContactsStream,
-    ContactRelationsStream,
-    ContactGroupsStream,
-    ContactSectorsStream,
-    ContactTypesStream,
-    SalutationsStream,
-    TitlesStream,
-    ContactAdditionalAddressesStream,
-]

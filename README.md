@@ -8,17 +8,54 @@ Supports Python 3.12, 3.13 and 3.14.
 
 | Setting                     | Required | Default                 | Description |
 |-----------------------------|----------|-------------------------|-------------|
-| `auth_token`                | yes      |                         | Bexio Personal Access Token or OAuth access token. |
+| `auth_token`                | no       |                         | Bexio Personal Access Token. Leave empty when using OAuth. |
+| `client_id`                 | no       |                         | Client ID of the bexio developer portal app (OAuth). |
+| `client_secret`             | no       |                         | Client secret of the bexio developer portal app (OAuth). |
+| `refresh_token`             | no       |                         | Offline refresh token, exchanged for an access token on every run. Get one with `tap-bexio-auth`. |
+| `oauth_token_url`           | no       | `https://auth.bexio.com/realms/bexio/protocol/openid-connect/token` | bexio OpenID Connect token endpoint. |
 | `start_date`                | no       |                         | Lower bound of `updated_at` for incremental streams on the first sync; also the `from` date of `journal` and the first business year of `payroll_absences`. Without it, the first sync reads everything. |
 | `api_url`                   | no       | `https://api.bexio.com` | Base URL of the Bexio API. |
 | `user_agent`                | no       |                         | `User-Agent` header sent with every request. |
 | `page_size`                 | no       | `500`                   | Records per request (max 2000; 500 for 4.0 purchase endpoints). |
-| `timezone`                  | no       | `Europe/Zurich`         | Timezone of Bexio's offset-less 2.0 timestamps. These are emitted as ISO 8601 with an offset and used to build the search filter. |
+| `timezone`                  | no       | `Europe/Zurich`         | Timezone of Bexio's offset-less 2.0 timestamps, used to build the search filter. All timestamps are emitted as ISO 8601 in this timezone (3.0 and 4.0 timestamps with an offset are converted); dates are emitted as `YYYY-MM-DD`. |
 | `forbidden_stream_behavior` | no       | `skip`                  | On HTTP 403 (missing scope or inactive module): `skip` logs a warning and continues, `fail` stops the sync. |
+
+Set either `auth_token` or all of `client_id`, `client_secret` and `refresh_token`.
+
+### Authentication
+
+**Personal Access Token**: create one in bexio and set `auth_token`.
+
+**OAuth (OpenID Connect)**: for an app registered in the
+[bexio developer portal](https://developer.bexio.com/) with a redirect URL on this machine
+(e.g. `http://localhost:8080/callback`):
+
+1. Log in once and capture a refresh token:
+
+   ```bash
+   TAP_BEXIO_CLIENT_ID=... TAP_BEXIO_CLIENT_SECRET=... \
+     uv run tap-bexio-auth --redirect-uri http://localhost:8080/callback
+   ```
+
+   This opens the browser, receives the redirect on the local port, and prints the
+   `meltano config tap-bexio set refresh_token ...` command. `--scopes` overrides the
+   requested scopes (default: `openid offline_access` plus the read scopes the streams use);
+   `--json` prints the full token response.
+2. Store `client_id`, `client_secret` and `refresh_token` with `meltano config tap-bexio set`
+   (they go to `.env`, not `meltano.yml`).
+
+On every run the tap exchanges the refresh token for an access token (valid 1 hour) and
+refreshes it during long syncs. The `offline_access` refresh token does not expire while it
+is used, but bexio revokes offline tokens that stay unused for its offline-idle period, so
+run a sync at least monthly or log in again. If bexio ever issues a new refresh token the
+tap logs a warning; update the setting if the old one stops working.
 
 Settings can also be provided as environment variables (`TAP_BEXIO_AUTH_TOKEN`, ...) with `--config=ENV`.
 
 API reference: <https://docs.bexio.com/>
+
+Terms such as document, position, partition and search stream are defined in
+[GLOSSARY.md](GLOSSARY.md).
 
 ## Streams
 
@@ -128,10 +165,16 @@ Notes:
 
 ## Usage
 
+Copy [.env.example](.env.example) to `.env` (git-ignored) and set either
+`TAP_BEXIO_AUTH_TOKEN` or the three OAuth variables. Other settings follow the same
+pattern (`TAP_BEXIO_START_DATE`, `TAP_BEXIO_PAGE_SIZE`, ...). With `--config ENV` the SDK
+loads the nearest `.env` (searching upward from the working directory) and reads the
+`TAP_BEXIO_*` variables.
+
 ```bash
 tap-bexio --about
-tap-bexio --config config.json --discover > catalog.json
-tap-bexio --config config.json --catalog catalog.json
+tap-bexio --config ENV --discover > catalog.json
+tap-bexio --config ENV --catalog catalog.json
 ```
 
 With Meltano:
@@ -164,6 +207,16 @@ plugins:
         - name: auth_token
           kind: string
           sensitive: true
+        - name: client_id
+          kind: string
+        - name: client_secret
+          kind: string
+          sensitive: true
+        - name: refresh_token
+          kind: string
+          sensitive: true
+        - name: oauth_token_url
+          kind: string
         - name: start_date
           kind: date_iso8601
         - name: api_url
@@ -183,10 +236,12 @@ plugins:
               value: fail
       settings_group_validation:
         - [auth_token]
+        - [client_id, client_secret, refresh_token]
 ```
 
 Then `meltano install extractor tap-bexio` and set the token with
-`meltano config tap-bexio set auth_token <token>` (or `TAP_BEXIO_AUTH_TOKEN`).
+`meltano config tap-bexio set auth_token <token>` (or `TAP_BEXIO_AUTH_TOKEN`), or the OAuth
+settings as described under [Authentication](#authentication).
 
 To upgrade, push a new tag, bump it in `pip_url`, and run
 `meltano install extractor tap-bexio` again.

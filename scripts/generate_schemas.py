@@ -15,89 +15,20 @@ from pathlib import Path
 
 import requests
 
+from tap_bexio.client import BexioStream
+from tap_bexio.tap import TapBexio
+
 DOCS_URL = "https://docs.bexio.com/"
 REDOC_MARKER = "__redoc_state = "
 SCHEMAS_DIR = Path(__file__).parent.parent / "src" / "tap_bexio" / "schemas"
 
-# Endpoint definitions: (method, path, record selector).
-# Selectors: "list" -> array items or ``data`` items, "self" -> the response object itself,
-# "positions" -> items of the ``positions`` array in a document detail response.
-ENDPOINTS: dict[str, tuple[str, str, str]] = {
-    # Contacts
-    "contacts": ("get", "/2.0/contact", "list"),
-    "contact_relations": ("get", "/2.0/contact_relation", "list"),
-    "contact_groups": ("get", "/2.0/contact_group", "list"),
-    "contact_sectors": ("get", "/2.0/contact_branch", "list"),
-    "salutations": ("get", "/2.0/salutation", "list"),
-    "titles": ("get", "/2.0/title", "list"),
-    "contact_additional_addresses": ("get", "/2.0/contact/{contact_id}/additional_address", "list"),
-    # Sales
-    "invoices": ("get", "/2.0/kb_invoice", "list"),
-    "offers": ("get", "/2.0/kb_offer", "list"),
-    "orders": ("get", "/2.0/kb_order", "list"),
-    "deliveries": ("get", "/2.0/kb_delivery", "list"),
-    "invoice_positions": ("get", "/2.0/kb_invoice/{invoice_id}", "positions"),
-    "offer_positions": ("get", "/2.0/kb_offer/{quote_id}", "positions"),
-    "order_positions": ("get", "/2.0/kb_order/{order_id}", "positions"),
-    "delivery_positions": ("get", "/2.0/kb_delivery/{delivery_id}", "positions"),
-    "invoice_payments": ("get", "/2.0/kb_invoice/{invoice_id}/payment", "list"),
-    "invoice_reminders": ("get", "/2.0/kb_invoice/{invoice_id}/kb_reminder", "list"),
-    "invoice_comments": ("get", "/2.0/{kb_document_type}/{document_id}/comment", "list"),
-    "offer_comments": ("get", "/2.0/{kb_document_type}/{document_id}/comment", "list"),
-    "order_comments": ("get", "/2.0/{kb_document_type}/{document_id}/comment", "list"),
-    "document_settings": ("get", "/2.0/kb_item_setting", "list"),
-    "document_templates": ("get", "/3.0/document_templates", "list"),
-    # Items
-    "articles": ("get", "/2.0/article", "list"),
-    "stock_locations": ("get", "/2.0/stock_place", "list"),
-    "stock_areas": ("get", "/2.0/stock", "list"),
-    "units": ("get", "/2.0/unit", "list"),
-    # Purchase
-    "bills": ("get", "/4.0/purchase/bills", "list"),
-    "bill_outgoing_payments": ("get", "/4.0/purchase/outgoing-payments", "list"),
-    "expenses": ("get", "/4.0/expenses", "list"),
-    "purchase_orders": ("get", "/3.0/purchase_orders", "list"),
-    # Accounting
-    "accounts": ("get", "/2.0/accounts", "list"),
-    "account_groups": ("get", "/2.0/account_groups", "list"),
-    "journal": ("get", "/3.0/accounting/journal", "list"),
-    "manual_entries": ("get", "/3.0/accounting/manual_entries", "list"),
-    "manual_entry_files": ("get", "/3.0/accounting/manual_entries/{manual_entry_id}/files", "list"),
-    "business_years": ("get", "/3.0/accounting/business_years", "list"),
-    "calendar_years": ("get", "/3.0/accounting/calendar_years", "list"),
-    "vat_periods": ("get", "/3.0/accounting/vat_periods", "list"),
-    "taxes": ("get", "/3.0/taxes", "list"),
-    "currencies": ("get", "/3.0/currencies", "list"),
-    "currency_exchange_rates": ("get", "/3.0/currencies/{currency_id}/exchange_rates", "list"),
-    # Banking
-    "bank_accounts": ("get", "/3.0/banking/accounts", "list"),
-    "payments": ("get", "/4.0/banking/payments", "self"),
-    "payment_types": ("get", "/2.0/payment_type", "list"),
-    # Projects and time tracking
-    "projects": ("get", "/2.0/pr_project", "list"),
-    "project_states": ("get", "/2.0/pr_project_state", "list"),
-    "project_types": ("get", "/2.0/pr_project_type", "list"),
-    "project_milestones": ("get", "/3.0/projects/{project_id}/milestones", "list"),
-    "project_packages": ("get", "/3.0/projects/{project_id}/packages", "list"),
-    "timesheets": ("get", "/2.0/timesheet", "list"),
-    "timesheet_statuses": ("get", "/2.0/timesheet_status", "list"),
-    "business_activities": ("get", "/2.0/client_service", "list"),
-    "tasks": ("get", "/2.0/task", "list"),
-    "task_priorities": ("get", "/2.0/todo_priority", "list"),
-    "task_statuses": ("get", "/2.0/todo_status", "list"),
-    "notes": ("get", "/2.0/note", "list"),
-    "communication_types": ("get", "/2.0/communication_kind", "list"),
-    # Other
-    "users": ("get", "/3.0/users", "list"),
-    "fictional_users": ("get", "/3.0/fictional_users", "list"),
-    "company_profile": ("get", "/2.0/company_profile", "list"),
-    "countries": ("get", "/2.0/country", "list"),
-    "languages": ("get", "/2.0/language", "list"),
-    "files": ("get", "/3.0/files", "list"),
-    "permissions": ("get", "/3.0/permissions", "self"),
-    # Payroll
-    "payroll_employees": ("get", "/4.0/payroll/employees", "list"),
-    "payroll_absences": ("get", "/4.0/payroll/employees/{employeeId}/absences", "list"),
+# Record selectors: "list" -> array items or ``data`` items, "self" -> the response object
+# itself, "positions" -> items of the ``positions`` array in a document detail response.
+# They follow each stream's ``records_jsonpath``, except where the spec disagrees with the API.
+SELECTORS = {"$": "self", "$.positions[*]": "positions"}
+SELECTOR_OVERRIDES = {
+    # Documented as a single payment object; the API returns a list under ``results``.
+    "payments": "self",
 }
 
 # Streams whose endpoint is missing from the spec, or which need fields the tap adds.
@@ -105,27 +36,10 @@ STATIC_SCHEMAS: dict[str, dict[str, t.Any]] = {
     # Legacy endpoint, no longer in the OpenAPI spec.
     "contact_types": {"id": {"type": "integer"}, "name": {"type": "string"}},
 }
-_DOC_ID = {"document_id": {"type": "integer"}}
+# Fields the tap adds beyond the parent's context key (which is derived from the parent's id).
 EXTRA_PROPERTIES: dict[str, dict[str, t.Any]] = {
-    "contact_additional_addresses": {"contact_id": {"type": "integer"}},
-    "invoice_positions": _DOC_ID,
-    "offer_positions": _DOC_ID,
-    "order_positions": _DOC_ID,
-    "delivery_positions": _DOC_ID,
-    "invoice_payments": _DOC_ID,
-    "invoice_reminders": _DOC_ID,
-    "invoice_comments": _DOC_ID,
-    "offer_comments": _DOC_ID,
-    "order_comments": _DOC_ID,
-    "bill_outgoing_payments": {"bill_id": {"type": "string"}},
-    "manual_entry_files": {"manual_entry_id": {"type": "integer"}},
-    "currency_exchange_rates": {
-        "currency_id": {"type": "integer"},
-        "exchange_currency_id": {"type": "integer"},
-    },
-    "project_milestones": {"project_id": {"type": "integer"}},
-    "project_packages": {"project_id": {"type": "integer"}},
-    "payroll_absences": {"employee_id": {"type": "string"}, "business_year": {"type": "integer"}},
+    "currency_exchange_rates": {"exchange_currency_id": {"type": "integer"}},
+    "payroll_absences": {"business_year": {"type": "integer"}},
 }
 # Corrections from live API responses: undocumented fields, and free-form objects
 # (no ``properties``, so every key is kept). Applied verbatim after conversion.
@@ -172,8 +86,6 @@ SCHEMA_PATCHES: dict[str, dict[str, t.Any]] = {
     "invoice_payments": {"title": _STR},
     "manual_entries": {"booking_type": _STR},
     "manual_entry_files": {"processing_source": _STR, "processing_status": _STR},
-    # Documented as a date, returned as a date-time ("2026-10-28T00:00:00+01:00").
-    "journal": {"date": {"type": ["string", "null"], "format": "date-time"}},
     "permissions": {"permissions": {"type": ["object", "null"]}},
     # Documented as a number, returned as a decimal string ("123.000000").
     "payments": {"amount": _STR, "message": _STR},
@@ -190,6 +102,32 @@ SCHEMA_PATCHES: dict[str, dict[str, t.Any]] = {
     "projects": {"pr_budget_type_amount": _NUM, "pr_invoice_type_amount": _NUM},
     "timesheet_statuses": {"translation_key": _STR},
     "timesheets": {"task_id": _INT},
+}
+# Date/date-time formats where the spec disagrees with live API responses. Keys are field
+# paths ("." for nested objects, "[]" for array items); None drops the format. Overriding a
+# field that is not in the schema is an error, so stale entries surface.
+_DATE_TIME, _DATE = "date-time", "date"
+FORMAT_OVERRIDES: dict[str, dict[str, str | None]] = {
+    # Documented as dates, returned as date-times ("2026-10-28T12:35:15+01:00").
+    "calendar_years": {"created_at": _DATE_TIME, "updated_at": _DATE_TIME},
+    "purchase_orders": {"created_at": _DATE_TIME, "updated_at": _DATE_TIME},
+    # Documented as a date, returned as midnight in the company timezone
+    # ("2026-10-28T00:00:00+01:00").
+    "journal": {"date": _DATE_TIME},
+    # Documented as dates; only null seen so far, assumed to match created_at on 3.0.
+    "business_years": {"closed_at": _DATE_TIME},
+    "vat_periods": {"closed_at": _DATE_TIME},
+    # Documented with the invalid format "datetime", returned as "2026-10-28T15:49:46+01:00".
+    "payments": {"created_at": _DATE_TIME},
+    # Undocumented format, returned as local time ("2026-10-28 15:08:33").
+    "invoice_comments": {"date": _DATE_TIME},
+    "offer_comments": {"date": _DATE_TIME},
+    "order_comments": {"date": _DATE_TIME},
+    # Nested, so the converter drops the format; returned as local time ("2026-10-31 08:15:00").
+    "timesheets": {"tracking.start": _DATE_TIME, "tracking.end": _DATE_TIME},
+    # Undocumented format, returned as "2026-10-31".
+    "currencies": {"exchange_rate_date": _DATE},
+    "currency_exchange_rates": {"exchange_rate_date": _DATE},
 }
 
 
@@ -241,32 +179,27 @@ class Converter:
         return properties
 
     def convert(self, node: t.Any, depth: int = 0, *, top: bool = False) -> dict[str, t.Any]:  # noqa: ANN401
-        """Convert one schema node into a nullable Singer schema node."""
+        """Convert one schema node into a nullable Singer schema node.
+
+        Any node with allOf/anyOf/oneOf variants converts as an object.
+        """
         node = self.deref(node)
         if depth > 12:  # noqa: PLR2004 - guard against recursive schemas
             return {}
         properties = self.object_properties(node)
         if properties is not None:
-            result: dict[str, t.Any] = {"type": ["object", "null"]}
-            # Without declared properties, omit the key: ``"properties": {}`` drops every key.
-            if properties:
-                result["properties"] = {
-                    name: self.convert(value, depth + 1) for name, value in properties.items()
-                }
-            return result
-        variants = node.get("anyOf") or node.get("oneOf")
-        if variants:
-            types = sorted({ty for v in variants for ty in self.convert(v, depth + 1)["type"]})
-            return {"type": types} if types else {}
-        json_type = node.get("type")
-        if json_type is None:
-            return {}
-        if json_type == "array":
+            return self._convert_object(properties, depth)
+        if node.get("type") == "array":
             return {"type": ["array", "null"], "items": self.convert(node.get("items", {}), depth)}
-        result: dict[str, t.Any] = {"type": [json_type, "null"]}
-        fmt = node.get("format")
-        if fmt == "date" or (fmt == "date-time" and top):
-            result["format"] = fmt
+        return _convert_scalar(node, top=top)
+
+    def _convert_object(self, properties: dict[str, t.Any], depth: int) -> dict[str, t.Any]:
+        result: dict[str, t.Any] = {"type": ["object", "null"]}
+        # Without declared properties, omit the key: ``"properties": {}`` drops every key.
+        if properties:
+            result["properties"] = {
+                name: self.convert(value, depth + 1) for name, value in properties.items()
+            }
         return result
 
     def record_schema(self, method: str, path: str, selector: str) -> dict[str, t.Any]:
@@ -291,33 +224,139 @@ class Converter:
     def wrap(self, properties: dict[str, t.Any]) -> dict[str, t.Any]:
         """Build a top-level stream schema from OpenAPI properties."""
         converted = {name: self.convert(value, top=True) for name, value in properties.items()}
-        for name, schema in converted.items():
-            # The spec types some timestamps (e.g. calendar_years.created_at) as ``date``,
-            # but the API returns full date-times.
-            if name.endswith("_at") and schema.get("format") == "date":
-                schema["format"] = "date-time"
         return {"type": "object", "properties": converted}
+
+
+def _convert_scalar(node: dict[str, t.Any], *, top: bool) -> dict[str, t.Any]:
+    """Convert a typed leaf node, keeping dates everywhere and date-times only at the top."""
+    json_type = node.get("type")
+    if json_type is None:
+        return {}
+    result: dict[str, t.Any] = {"type": [json_type, "null"]}
+    fmt = node.get("format")
+    if fmt == "date" or (fmt == "date-time" and top):
+        result["format"] = fmt
+    return result
+
+
+def override_format(schema: dict[str, t.Any], path: str, fmt: str | None) -> None:
+    """Set (or with ``None`` drop) the format of the property at ``path``."""
+    node = schema
+    for part in path.replace("[]", ".[]").split("."):
+        if part == "[]":
+            node = node["items"]
+        elif part:
+            node = node["properties"][part]
+    if fmt is None:
+        node.pop("format", None)
+    else:
+        node["format"] = fmt
+
+
+def spec_path(spec: dict[str, t.Any], path: str) -> str:
+    """Return the spec path that ``path`` (a stream path) is served under.
+
+    Parameters match whatever the spec names them, and a spec parameter also matches a
+    literal segment (``/2.0/{kb_document_type}/...``); exact literals win.
+    """
+    segments = path.split("/")
+    scored = [
+        (score, candidate)
+        for candidate in spec["paths"]
+        if (score := _match_score(segments, candidate.split("/"))) is not None
+    ]
+    if not scored:
+        msg = f"{path} is not in the spec"
+        raise SpecError(msg)
+    # max() keeps the first of equal scores, as the spec lists them.
+    return max(scored, key=lambda pair: pair[0])[1]
+
+
+def _match_score(segments: list[str], parts: list[str]) -> int | None:
+    """Count the literal segments ``parts`` shares with ``segments``; None if it cannot match."""
+    if len(parts) != len(segments):
+        return None
+    score = 0
+    for ours, theirs in zip(segments, parts, strict=True):
+        if ours == theirs:
+            score += 1
+        elif not theirs.startswith("{"):
+            return None
+    return score
+
+
+def tap_streams() -> list[BexioStream]:
+    """Return the tap's streams, which define the paths, selectors and context keys."""
+    tap = TapBexio(config={"auth_token": "unused"}, setup_mapper=False)
+    return [stream for stream in tap.streams.values() if isinstance(stream, BexioStream)]
+
+
+def endpoints(spec: dict[str, t.Any]) -> dict[str, tuple[str, str, str]]:
+    """Return ``(method, spec path, selector)`` for every stream with a spec endpoint."""
+    result = {}
+    for stream in tap_streams():
+        if stream.name in STATIC_SCHEMAS:
+            continue
+        selector = SELECTOR_OVERRIDES.get(
+            stream.name, SELECTORS.get(stream.records_jsonpath, "list")
+        )
+        result[stream.name] = ("get", spec_path(spec, stream.path), selector)
+    return result
+
+
+def context_properties(schemas: dict[str, dict[str, t.Any]]) -> dict[str, dict[str, t.Any]]:
+    """Return each child's context key, typed like its parent's ``id``."""
+    result: dict[str, dict[str, t.Any]] = {}
+    for parent in tap_streams():
+        if parent.child_context_key is None:
+            continue
+        parent_id = schemas[parent.name]["properties"]["id"]
+        for child in parent.child_streams:
+            result[child.name] = {parent.child_context_key: {"type": parent_id["type"]}}
+    return result
+
+
+def build_schemas(spec: dict[str, t.Any]) -> dict[str, dict[str, t.Any]]:
+    """Return every stream schema: converted from the spec, with context keys and corrections."""
+    converter = Converter(spec)
+    schemas = {
+        name: converter.record_schema(*endpoint) for name, endpoint in endpoints(spec).items()
+    } | {name: converter.wrap(properties) for name, properties in STATIC_SCHEMAS.items()}
+    context = context_properties(schemas)
+    for name, schema in schemas.items():
+        schema["properties"].update(context.get(name, {}))
+        apply_corrections(name, schema, converter)
+    return schemas
+
+
+def apply_corrections(name: str, schema: dict[str, t.Any], converter: Converter) -> None:
+    """Apply the extra properties, patches, removals and format overrides for a stream."""
+    properties = schema["properties"]
+    for prop, prop_schema in EXTRA_PROPERTIES.get(name, {}).items():
+        properties[prop] = converter.convert(prop_schema, top=True)
+    properties.update(SCHEMA_PATCHES.get(name, {}))
+    for prop in SCHEMA_REMOVALS.get(name, ()):
+        del properties[prop]
+    for prop, fmt in FORMAT_OVERRIDES.get(name, {}).items():
+        override_format(schema, prop, fmt)
+
+
+def write_schemas(schemas: dict[str, dict[str, t.Any]], directory: Path) -> None:
+    """Write one JSON file per schema and delete files for streams that no longer exist."""
+    directory.mkdir(parents=True, exist_ok=True)
+    for stale in directory.glob("*.json"):
+        if stale.stem not in schemas:
+            stale.unlink()
+    for name, schema in sorted(schemas.items()):
+        path = directory / f"{name}.json"
+        path.write_text(json.dumps(schema, indent=2, sort_keys=True) + "\n", encoding="utf-8")
 
 
 def main() -> None:
     """Regenerate every stream schema file."""
     spec = load_spec(sys.argv[1] if len(sys.argv) > 1 else None)
-    converter = Converter(spec)
-    schemas = {name: converter.record_schema(*endpoint) for name, endpoint in ENDPOINTS.items()} | {
-        name: converter.wrap(properties) for name, properties in STATIC_SCHEMAS.items()
-    }
-    SCHEMAS_DIR.mkdir(parents=True, exist_ok=True)
-    for stale in SCHEMAS_DIR.glob("*.json"):
-        if stale.stem not in schemas:
-            stale.unlink()
-    for name, schema in sorted(schemas.items()):
-        for prop, prop_schema in EXTRA_PROPERTIES.get(name, {}).items():
-            schema["properties"][prop] = converter.convert(prop_schema, top=True)
-        schema["properties"].update(SCHEMA_PATCHES.get(name, {}))
-        for prop in SCHEMA_REMOVALS.get(name, ()):
-            del schema["properties"][prop]
-        path = SCHEMAS_DIR / f"{name}.json"
-        path.write_text(json.dumps(schema, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    schemas = build_schemas(spec)
+    write_schemas(schemas, SCHEMAS_DIR)
     sys.stdout.write(f"Wrote {len(schemas)} schemas to {SCHEMAS_DIR}\n")
 
 

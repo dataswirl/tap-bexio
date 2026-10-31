@@ -2,42 +2,34 @@
 
 from __future__ import annotations
 
-import datetime as dt
-import re
 import time
 import typing as t
 from functools import cached_property
-from http import HTTPStatus
 from importlib.resources import files
-from zoneinfo import ZoneInfo
 
 from singer_sdk import SchemaDirectory, StreamSchema
-from singer_sdk.authenticators import BearerTokenAuthenticator
 from singer_sdk.exceptions import FatalAPIError, RetriableAPIError
 from singer_sdk.pagination import SinglePagePaginator
 from singer_sdk.streams import RESTStream
 
+from tap_bexio import dates
+from tap_bexio.config import MAX_PAGE_SIZE, TokenAuth
+from tap_bexio.http_policy import Action, classify, retry_wait, throttle_wait
 from tap_bexio.pagination import BexioOffsetPaginator, BexioPagePaginator
 
 if t.TYPE_CHECKING:
+    import datetime as dt
     from collections.abc import Generator, Iterable
+    from zoneinfo import ZoneInfo
 
     import requests
+    from singer_sdk.authenticators import APIAuthenticatorBase
     from singer_sdk.helpers.types import Context, Record
 
-DEFAULT_API_URL = "https://api.bexio.com"
-DEFAULT_PAGE_SIZE = 500
-MAX_PAGE_SIZE = 2000
-DEFAULT_TIMEZONE = "Europe/Zurich"
-DEFAULT_RATE_LIMIT_WAIT = 60
-DEFAULT_RETRY_WAIT = 10
-# Pause before the next request once the remaining quota drops to this many requests.
-RATE_LIMIT_MIN_REMAINING = 1
-FORBIDDEN_SKIP = "skip"
-FORBIDDEN_FAIL = "fail"
+    from tap_bexio.config import BexioConfig
+    from tap_bexio.tap import TapBexio
 
 # Bexio 2.0 timestamps are local (company) time without an offset, e.g. "2019-04-08 13:17:32".
-BEXIO_TIMESTAMP = re.compile(r"^\d{4}-\d{2}-\d{2} \d{2}:\d{2}(:\d{2})?$")
 BEXIO_TIMESTAMP_FORMAT = "%Y-%m-%d %H:%M:%S"
 
 SCHEMAS = SchemaDirectory(files("tap_bexio") / "schemas")
@@ -67,41 +59,50 @@ class BexioStream(RESTStream[t.Any]):
     #: For parent streams: context key under which each record's ``id`` is passed to children.
     child_context_key: t.ClassVar[str | None] = None
 
-    _skip_remaining = False
+    def __init__(self, *args: t.Any, **kwargs: t.Any) -> None:  # noqa: ANN401
+        """Create the stream; child streams keep one bookmark, not one per parent record."""
+        super().__init__(*args, **kwargs)
+        self._skip_remaining = False
+        if self.parent_stream_type is not None:
+            self.state_partitioning_keys = ()
+
+    @property
+    def settings(self) -> BexioConfig:
+        """Return the tap's parsed settings."""
+        return t.cast("TapBexio", self._tap).settings
 
     @property
     def url_base(self) -> str:
         """Return the API base URL."""
-        return self.config.get("api_url", DEFAULT_API_URL).rstrip("/")
+        return self.settings.api_url
 
-    @cached_property
-    def authenticator(self) -> BearerTokenAuthenticator:
-        """Return a Bearer token authenticator."""
-        return BearerTokenAuthenticator(token=self.config["auth_token"])
+    @property
+    def authenticator(self) -> APIAuthenticatorBase:
+        """Return the tap's authenticator, shared by all streams."""
+        return t.cast("TapBexio", self._tap).authenticator
 
     @property
     def http_headers(self) -> dict[str, str]:
         """Return headers sent with every request."""
         headers = {"Accept": "application/json"}
-        if user_agent := self.config.get("user_agent"):
+        if user_agent := self.settings.user_agent:
             headers["User-Agent"] = user_agent
         return headers
 
     @property
     def page_size(self) -> int:
         """Return the page size, capped at the endpoint maximum."""
-        return min(self.config.get("page_size", DEFAULT_PAGE_SIZE), self.max_page_size)
+        return min(self.settings.page_size, self.max_page_size)
 
-    @cached_property
+    @property
     def timezone(self) -> ZoneInfo:
-        """Return the timezone of Bexio's offset-less timestamps."""
-        return ZoneInfo(self.config.get("timezone", DEFAULT_TIMEZONE))
+        """Return the timezone of Bexio's offset-less timestamps and of emitted timestamps."""
+        return self.settings.timezone
 
     @cached_property
-    def _datetime_fields(self) -> tuple[str, ...]:
-        """Return the top-level properties declared as ``date-time``."""
-        properties = self.schema.get("properties", {})
-        return tuple(k for k, v in properties.items() if v.get("format") == "date-time")
+    def _date_fields(self) -> dates.FormatTree:
+        """Return the ``date``/``date-time`` properties as a tree of formats."""
+        return dates.date_tree(self.schema)
 
     def get_url_params(
         self,
@@ -112,39 +113,43 @@ class BexioStream(RESTStream[t.Any]):
         return dict(self.extra_params)
 
     def validate_response(self, response: requests.Response) -> None:
-        """Map Bexio error statuses to retry, skip or fail."""
-        status = response.status_code
-        if status != HTTPStatus.TOO_MANY_REQUESTS:
-            self._throttle(response)
-        if status == HTTPStatus.UNAUTHORIZED:
-            msg = f"{self.response_error_message(response)}. Check that auth_token is valid."
-            raise FatalAPIError(msg)
-        if status == HTTPStatus.FORBIDDEN:
-            msg = (
-                f"Access to stream '{self.name}' is forbidden ({response.url}). The token "
-                "lacks the required scope or the Bexio module is not active."
-            )
-            if self.config.get("forbidden_stream_behavior", FORBIDDEN_SKIP) == FORBIDDEN_SKIP:
-                msg += " Skipping stream."
-                raise StreamSkippedError(msg, whole_stream=True)
-            msg += " Set forbidden_stream_behavior=skip to skip it."
-            raise FatalAPIError(msg)
-        if status == HTTPStatus.NOT_FOUND and self.parent_stream_type is not None:
-            msg = f"{response.url} not found (deleted during sync?). Skipping."
-            raise StreamSkippedError(msg, whole_stream=False)
+        """Map Bexio error statuses to skip or fail; leave retries to the SDK."""
+        if wait := throttle_wait(response.status_code, response.headers):
+            self.logger.info("Rate limit nearly used up, sleeping %ss.", wait)
+            time.sleep(wait)
+        action = classify(
+            response.status_code,
+            is_child=self.parent_stream_type is not None,
+            forbidden=self.settings.forbidden,
+        )
+        if action is not Action.CONTINUE:
+            raise self._action_error(action, response)
         super().validate_response(response)
 
-    def _throttle(self, response: requests.Response) -> None:
-        """Wait for the rate-limit window to reset when the remaining quota is nearly used up.
+    def _action_error(self, action: Action, response: requests.Response) -> Exception:
+        """Return the exception that carries out ``action``."""
+        if action is Action.FAIL_UNAUTHORIZED:
+            return FatalAPIError(
+                f"{self.response_error_message(response)}. Check that "
+                f"{self._credential_name} is valid."
+            )
+        if action is Action.SKIP_PARTITION:
+            msg = f"{response.url} not found (deleted during sync?). Skipping."
+            return StreamSkippedError(msg, whole_stream=False)
+        msg = (
+            f"Access to stream '{self.name}' is forbidden ({response.url}). The token "
+            "lacks the required scope or the Bexio module is not active."
+        )
+        if action is Action.SKIP_STREAM:
+            return StreamSkippedError(f"{msg} Skipping stream.", whole_stream=True)
+        return FatalAPIError(f"{msg} Set forbidden_stream_behavior=skip to skip it.")
 
-        429s are left to the backoff, which already waits for ``RateLimit-Reset``.
-        """
-        remaining = response.headers.get("RateLimit-Remaining", "")
-        reset = response.headers.get("RateLimit-Reset", "")
-        if remaining.isdigit() and reset.isdigit() and int(remaining) <= RATE_LIMIT_MIN_REMAINING:
-            wait = int(reset) + 1
-            self.logger.info("Rate limit nearly used up (%s left), sleeping %ss.", remaining, wait)
-            time.sleep(wait)
+    @property
+    def _credential_name(self) -> str:
+        """Return the setting to blame for a 401."""
+        if isinstance(self.settings.auth, TokenAuth):
+            return "auth_token"
+        return "the OAuth token (client_id, client_secret, refresh_token)"
 
     def get_records(self, context: Context | None) -> Iterable[dict[str, t.Any]]:
         """Return records, ending early on a skipped stream or partition."""
@@ -157,12 +162,8 @@ class BexioStream(RESTStream[t.Any]):
             self._skip_remaining = exc.whole_stream
 
     def post_process(self, row: Record, context: Context | None = None) -> Record | None:
-        """Normalize local timestamps to ISO 8601 and add parent context keys."""
-        for field in self._datetime_fields:
-            value = row.get(field)
-            if isinstance(value, str) and BEXIO_TIMESTAMP.match(value):
-                parsed = dt.datetime.fromisoformat(value).replace(tzinfo=self.timezone)
-                row[field] = parsed.isoformat()
+        """Conform dates and timestamps to ISO 8601 and add parent context keys."""
+        dates.conform(row, self._date_fields, self.timezone)
         properties = self.schema.get("properties", {})
         for key, value in (context or {}).items():
             if key in properties and row.get(key) is None:
@@ -284,9 +285,8 @@ class BexioSearchStream(BexioOffsetStream):
 
 
 def _rate_limit_wait(exc: Exception) -> float:
-    """Return seconds to wait: the ``RateLimit-Reset`` header on 429, else a short pause."""
+    """Return seconds to wait before retrying the request that raised ``exc``."""
     response = exc.response if isinstance(exc, RetriableAPIError) else None
-    if response is None or response.status_code != HTTPStatus.TOO_MANY_REQUESTS:
-        return DEFAULT_RETRY_WAIT
-    reset = response.headers.get("RateLimit-Reset")
-    return int(reset) + 1 if reset and reset.isdigit() else DEFAULT_RATE_LIMIT_WAIT
+    if response is None:
+        return retry_wait(None, {})
+    return retry_wait(response.status_code, response.headers)

@@ -4,29 +4,32 @@ from __future__ import annotations
 
 import typing as t
 
-from tap_bexio.client import BexioOffsetStream, BexioPageStream, BexioStream
+from tap_bexio.client import BexioOffsetStream, BexioPageStream
 
 if t.TYPE_CHECKING:
     from singer_sdk.helpers.types import Context
 
 
-class BillsStream(BexioPageStream):
+class _PurchasePageStream(BexioPageStream):
+    """4.0 purchase and expense endpoint, which accepts at most 500 records per page."""
+
+    max_page_size = 500
+
+
+class BillsStream(_PurchasePageStream):
     """Purchase bills."""
 
     name = "bills"
     path = "/4.0/purchase/bills"
-    max_page_size = 500
     child_context_key = "bill_id"
 
 
-class BillOutgoingPaymentsStream(BexioPageStream):
+class BillOutgoingPaymentsStream(_PurchasePageStream):
     """Outgoing payments of a purchase bill."""
 
     name = "bill_outgoing_payments"
     path = "/4.0/purchase/outgoing-payments"
-    max_page_size = 500
     parent_stream_type = BillsStream
-    state_partitioning_keys = ()
 
     def get_url_params(
         self,
@@ -39,12 +42,11 @@ class BillOutgoingPaymentsStream(BexioPageStream):
         return params
 
 
-class ExpensesStream(BexioPageStream):
+class ExpensesStream(_PurchasePageStream):
     """Expenses."""
 
     name = "expenses"
     path = "/4.0/expenses"
-    max_page_size = 500
 
 
 class PurchaseOrdersStream(BexioOffsetStream):
@@ -52,11 +54,3 @@ class PurchaseOrdersStream(BexioOffsetStream):
 
     name = "purchase_orders"
     path = "/3.0/purchase_orders"
-
-
-STREAMS: list[type[BexioStream]] = [
-    BillsStream,
-    BillOutgoingPaymentsStream,
-    ExpensesStream,
-    PurchaseOrdersStream,
-]

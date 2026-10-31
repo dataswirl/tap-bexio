@@ -5,7 +5,6 @@ from __future__ import annotations
 from tap_bexio.client import (
     BexioOffsetStream,
     BexioSearchStream,
-    BexioStream,
     BexioUnpagedStream,
 )
 
@@ -53,14 +52,13 @@ class _PositionsStream(BexioUnpagedStream):
 
     records_jsonpath = "$.positions[*]"
     primary_keys = POSITION_KEYS
-    state_partitioning_keys = ()
 
 
 class InvoicePositionsStream(_PositionsStream):
     """Invoice positions."""
 
     name = "invoice_positions"
-    path = "/2.0/kb_invoice/{document_id}"
+    path = InvoicesStream.path + "/{document_id}"
     parent_stream_type = InvoicesStream
 
 
@@ -68,7 +66,7 @@ class OfferPositionsStream(_PositionsStream):
     """Offer positions."""
 
     name = "offer_positions"
-    path = "/2.0/kb_offer/{document_id}"
+    path = OffersStream.path + "/{document_id}"
     parent_stream_type = OffersStream
 
 
@@ -76,7 +74,7 @@ class OrderPositionsStream(_PositionsStream):
     """Order positions."""
 
     name = "order_positions"
-    path = "/2.0/kb_order/{document_id}"
+    path = OrdersStream.path + "/{document_id}"
     parent_stream_type = OrdersStream
 
 
@@ -84,7 +82,7 @@ class DeliveryPositionsStream(_PositionsStream):
     """Delivery positions."""
 
     name = "delivery_positions"
-    path = "/2.0/kb_delivery/{document_id}"
+    path = DeliveriesStream.path + "/{document_id}"
     parent_stream_type = DeliveriesStream
 
 
@@ -92,45 +90,40 @@ class InvoicePaymentsStream(BexioOffsetStream):
     """Payments received for an invoice."""
 
     name = "invoice_payments"
-    path = "/2.0/kb_invoice/{document_id}/payment"
+    path = InvoicesStream.path + "/{document_id}/payment"
     parent_stream_type = InvoicesStream
-    state_partitioning_keys = ()
 
 
 class InvoiceRemindersStream(BexioUnpagedStream):
     """Payment reminders of an invoice."""
 
     name = "invoice_reminders"
-    path = "/2.0/kb_invoice/{document_id}/kb_reminder"
+    path = InvoicesStream.path + "/{document_id}/kb_reminder"
     parent_stream_type = InvoicesStream
-    state_partitioning_keys = ()
 
 
 class InvoiceCommentsStream(BexioOffsetStream):
     """Comments on an invoice."""
 
     name = "invoice_comments"
-    path = "/2.0/kb_invoice/{document_id}/comment"
+    path = InvoicesStream.path + "/{document_id}/comment"
     parent_stream_type = InvoicesStream
-    state_partitioning_keys = ()
 
 
 class OfferCommentsStream(BexioOffsetStream):
     """Comments on an offer."""
 
     name = "offer_comments"
-    path = "/2.0/kb_offer/{document_id}/comment"
+    path = OffersStream.path + "/{document_id}/comment"
     parent_stream_type = OffersStream
-    state_partitioning_keys = ()
 
 
 class OrderCommentsStream(BexioOffsetStream):
     """Comments on an order."""
 
     name = "order_comments"
-    path = "/2.0/kb_order/{document_id}/comment"
+    path = OrdersStream.path + "/{document_id}/comment"
     parent_stream_type = OrdersStream
-    state_partitioning_keys = ()
 
 
 class DocumentSettingsStream(BexioUnpagedStream):
@@ -146,22 +139,3 @@ class DocumentTemplatesStream(BexioUnpagedStream):
     name = "document_templates"
     path = "/3.0/document_templates"
     primary_keys = ("template_slug",)
-
-
-STREAMS: list[type[BexioStream]] = [
-    InvoicesStream,
-    OffersStream,
-    OrdersStream,
-    DeliveriesStream,
-    InvoicePositionsStream,
-    OfferPositionsStream,
-    OrderPositionsStream,
-    DeliveryPositionsStream,
-    InvoicePaymentsStream,
-    InvoiceRemindersStream,
-    InvoiceCommentsStream,
-    OfferCommentsStream,
-    OrderCommentsStream,
-    DocumentSettingsStream,
-    DocumentTemplatesStream,
-]

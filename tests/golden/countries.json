@@ -1,0 +1,70 @@
+[
+ {
+  "key_properties": [
+   "id"
+  ],
+  "schema": {
+   "properties": {
+    "id": {
+     "type": [
+      "integer",
+      "null"
+     ]
+    },
+    "iso_3166_alpha2": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "name": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "name_short": {
+     "type": [
+      "string",
+      "null"
+     ]
+    }
+   },
+   "type": "object"
+  },
+  "stream": "countries",
+  "type": "SCHEMA"
+ },
+ {
+  "record": {
+   "id": 1,
+   "name": "CH"
+  },
+  "stream": "countries",
+  "type": "RECORD"
+ },
+ {
+  "record": {
+   "id": 2,
+   "name": "DE"
+  },
+  "stream": "countries",
+  "type": "RECORD"
+ },
+ {
+  "record": {
+   "id": 3,
+   "name": "AT"
+  },
+  "stream": "countries",
+  "type": "RECORD"
+ },
+ {
+  "type": "STATE",
+  "value": {
+   "bookmarks": {
+    "countries": {}
+   }
+  }
+ }
+]
