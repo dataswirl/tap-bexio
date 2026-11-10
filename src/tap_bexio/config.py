@@ -15,6 +15,7 @@ DEFAULT_API_URL = "https://api.bexio.com"
 DEFAULT_PAGE_SIZE = 500
 MAX_PAGE_SIZE = 2000
 DEFAULT_TIMEZONE = "Europe/Zurich"
+DEFAULT_OUTPUT_TIMEZONE = "UTC"
 OIDC_BASE_URL = "https://auth.bexio.com/realms/bexio/protocol/openid-connect"
 DEFAULT_OAUTH_TOKEN_URL = f"{OIDC_BASE_URL}/token"
 #: Settings that together select OAuth instead of ``auth_token``.
@@ -53,7 +54,12 @@ class BexioConfig:
     api_url: str = DEFAULT_API_URL
     user_agent: str | None = None
     page_size: int = DEFAULT_PAGE_SIZE
+    #: Company timezone: Bexio's offset-less timestamps are in it, and it decides the day of dates.
     timezone: ZoneInfo = dataclasses.field(default_factory=lambda: ZoneInfo(DEFAULT_TIMEZONE))
+    #: Timezone every ``date-time`` is emitted in.
+    output_timezone: ZoneInfo = dataclasses.field(
+        default_factory=lambda: ZoneInfo(DEFAULT_OUTPUT_TIMEZONE)
+    )
     #: Timezone-aware; a value without an offset is taken as UTC.
     start_date: dt.datetime | None = None
     forbidden: ForbiddenBehavior = ForbiddenBehavior.SKIP
@@ -67,6 +73,7 @@ class BexioConfig:
             user_agent=config.get("user_agent") or None,
             page_size=config.get("page_size", DEFAULT_PAGE_SIZE),
             timezone=_zone(config.get("timezone", DEFAULT_TIMEZONE)),
+            output_timezone=_zone(config.get("output_timezone", DEFAULT_OUTPUT_TIMEZONE)),
             start_date=_aware(config.get("start_date")),
             forbidden=ForbiddenBehavior(
                 config.get("forbidden_stream_behavior", ForbiddenBehavior.SKIP)

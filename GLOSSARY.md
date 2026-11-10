@@ -5,7 +5,8 @@ Terms used in the code, tests and docs of tap-bexio.
 | Term | Meaning |
 |------|---------|
 | **API generation** | Bexio serves three API versions side by side. **2.0** lists are bare arrays paged with `limit`/`offset`, timestamps are company-local without an offset. **3.0** is the same paging, sometimes with an `X-Total-Count` header, timestamps carry an offset. **4.0** pages by page number (`page`, `limit` or `per-page`), records sit under `data` or `results`, timestamps are UTC (`+0000`). |
-| **Company timezone** | The `timezone` setting. Bexio 2.0 timestamps are in this zone with no offset, and every emitted timestamp is converted to it. |
+| **Company timezone** | The `timezone` setting. Bexio 2.0 timestamps are in this zone with no offset, and the day of every emitted date is taken in it. |
+| **Output timezone** | The `output_timezone` setting (default UTC). Every emitted timestamp is converted to it. |
 | **Document** | A sales document: invoice, offer (quote), order or delivery. The 2.0 API calls them `kb_invoice`, `kb_offer`, `kb_order` and `kb_delivery`. |
 | **Position** | A line of a document (article, custom, text, subtotal, discount, page break, subposition). It comes from the document detail response and has the primary key `(document_id, type, id)`. |
 | **Parent / child stream** | A child stream runs once per parent record and gets the parent's `id` under the parent's `child_context_key` (e.g. `document_id`). |

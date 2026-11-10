@@ -111,9 +111,6 @@ FORMAT_OVERRIDES: dict[str, dict[str, str | None]] = {
     # Documented as dates, returned as date-times ("2026-10-28T12:35:15+01:00").
     "calendar_years": {"created_at": _DATE_TIME, "updated_at": _DATE_TIME},
     "purchase_orders": {"created_at": _DATE_TIME, "updated_at": _DATE_TIME},
-    # Documented as a date, returned as midnight in the company timezone
-    # ("2026-10-28T00:00:00+01:00").
-    "journal": {"date": _DATE_TIME},
     # Documented as dates; only null seen so far, assumed to match created_at on 3.0.
     "business_years": {"closed_at": _DATE_TIME},
     "vat_periods": {"closed_at": _DATE_TIME},

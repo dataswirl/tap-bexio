@@ -103,6 +103,37 @@ def test_search_stream_with_start_date_posts_search(make_tap, mocked):
     assert [m["record"]["id"] for m in messages if m["type"] == "RECORD"] == [1]
 
 
+@pytest.mark.parametrize(
+    ("bookmark", "since"),
+    [
+        ("2024-07-01T08:00:00+00:00", "2024-07-01 10:00:00"),
+        ("2024-07-01T10:00:00+02:00", "2024-07-01 10:00:00"),  # written before UTC output
+        # Summer time starts: 01:00 UTC is 03:00 local.
+        ("2024-03-31T00:59:59+00:00", "2024-03-31 01:59:59"),
+        ("2024-03-31T01:00:00+00:00", "2024-03-31 03:00:00"),
+        # Summer time ends: both 02:30 local map to the same, inclusive, filter value.
+        ("2024-10-27T00:30:00+00:00", "2024-10-27 02:30:00"),
+        ("2024-10-27T01:30:00+00:00", "2024-10-27 02:30:00"),
+    ],
+)
+def test_search_filter_is_the_bookmark_in_the_company_timezone(make_tap, mocked, bookmark, since):
+    state = {
+        "bookmarks": {
+            "invoices": {"replication_key": "updated_at", "replication_key_value": bookmark}
+        }
+    }
+    mocked.post(
+        f"{API}/2.0/kb_invoice/search",
+        json=[],
+        match=[
+            matchers.json_params_matcher(
+                [{"field": "updated_at", "value": since, "criteria": ">="}]
+            )
+        ],
+    )
+    assert [m for m in sync(make_tap(state=state), "invoices") if m["type"] == "RECORD"] == []
+
+
 def test_contacts_sync_active_and_archived_partitions_from_own_bookmarks(make_tap, mocked):
     # show_archived=true returns only archived contacts, so each set is its own partition.
     active_bookmark = {
@@ -138,28 +169,60 @@ def test_contacts_sync_active_and_archived_partitions_from_own_bookmarks(make_ta
 @pytest.mark.parametrize(
     ("value", "expected"),
     [
-        ("2024-01-15 13:17:32", "2024-01-15T13:17:32+01:00"),
-        ("2024-07-15 13:17:32", "2024-07-15T13:17:32+02:00"),
-        ("2024-07-15 13:17", "2024-07-15T13:17:00+02:00"),
-        ("2024-07-15T13:17:32+00:00", "2024-07-15T15:17:32+02:00"),
-        ("2024-07-15T13:17:32+0000", "2024-07-15T15:17:32+02:00"),  # 4.0: no colon
-        ("2024-07-15T13:17:32Z", "2024-07-15T15:17:32+02:00"),
-        ("2024-07-15T13:17:32+02:00", "2024-07-15T13:17:32+02:00"),
-        ("2024-07-15", "2024-07-15T00:00:00+02:00"),
+        ("2024-01-15 13:17:32", "2024-01-15T12:17:32+00:00"),
+        ("2024-07-15 13:17:32", "2024-07-15T11:17:32+00:00"),
+        ("2024-07-15 13:17", "2024-07-15T11:17:00+00:00"),
+        ("2024-07-15T13:17:32+00:00", "2024-07-15T13:17:32+00:00"),
+        ("2024-07-15T13:17:32+0000", "2024-07-15T13:17:32+00:00"),  # 4.0: no colon
+        ("2024-07-15T13:17:32Z", "2024-07-15T13:17:32+00:00"),
+        ("2024-07-15T13:17:32+02:00", "2024-07-15T11:17:32+00:00"),
+        ("2024-07-15", "2024-07-14T22:00:00+00:00"),
         ("not a timestamp", "not a timestamp"),
         ("", ""),
         (None, None),
     ],
 )
-def test_post_process_conforms_timestamps_to_configured_timezone(make_tap, value, expected):
+def test_post_process_emits_timestamps_in_utc(make_tap, value, expected):
     stream = make_tap().streams["invoices"]
     assert stream.post_process({"id": 1, "updated_at": value})["updated_at"] == expected
 
 
-def test_post_process_uses_timezone_from_config(make_tap):
-    stream = make_tap(timezone="Europe/Bucharest").streams["bills"]
+def test_post_process_reads_offsetless_timestamps_in_timezone_from_config(make_tap):
+    stream = make_tap(timezone="Europe/Bucharest").streams["invoices"]
+    row = stream.post_process({"id": 1, "updated_at": "2024-07-15 13:17:32"})
+    assert row["updated_at"] == "2024-07-15T10:17:32+00:00"
+
+
+def test_post_process_emits_timestamps_in_output_timezone_from_config(make_tap):
+    stream = make_tap(output_timezone="Europe/Bucharest").streams["bills"]
     row = stream.post_process({"id": "b1", "created_at": "2024-07-15T13:17:32+0000"})
     assert row["created_at"] == "2024-07-15T16:17:32+03:00"
+
+
+def test_timestamps_of_both_seasons_share_one_offset(make_tap):
+    # Two offsets in one column break targets that load timestamps with pandas.
+    stream = make_tap().streams["contacts"]
+    values = ["2026-01-15 09:00:00", "2026-07-15 09:00:00", "2026-10-25 02:30:00"]
+    rows = [stream.post_process({"id": i, "updated_at": v}) for i, v in enumerate(values)]
+    assert [row["updated_at"] for row in rows] == [
+        "2026-01-15T08:00:00+00:00",
+        "2026-07-15T07:00:00+00:00",
+        "2026-10-25T00:30:00+00:00",
+    ]
+
+
+@pytest.mark.parametrize(
+    ("value", "expected"),
+    [
+        ("2026-03-29T00:00:00+01:00", "2026-03-29"),
+        ("2026-07-15T00:00:00+02:00", "2026-07-15"),
+        ("2026-10-25T00:00:00+02:00", "2026-10-25"),
+        ("2026-10-26T00:00:00+01:00", "2026-10-26"),
+    ],
+)
+def test_journal_booking_date_is_a_date(make_tap, value, expected):
+    stream = make_tap().streams["journal"]
+    assert stream.post_process({"id": 1, "date": value})["date"] == expected
 
 
 @pytest.mark.parametrize(
@@ -167,7 +230,7 @@ def test_post_process_uses_timezone_from_config(make_tap):
     [
         ("2024-07-15", "2024-07-15"),
         ("2024-07-15 00:00:00", "2024-07-15"),
-        ("2024-07-14T23:30:00+00:00", "2024-07-15"),  # local day in the configured timezone
+        ("2024-07-14T23:30:00+00:00", "2024-07-15"),  # local day in the company timezone
     ],
 )
 def test_post_process_conforms_dates(make_tap, value, expected):
@@ -189,7 +252,7 @@ def test_post_process_conforms_nested_dates(make_tap):
     )
     assert timesheet["tracking"] == {
         "type": "range",
-        "start": "2026-10-31T08:15:00+01:00",
+        "start": "2026-10-31T07:15:00+00:00",
         "end": None,
     }
 

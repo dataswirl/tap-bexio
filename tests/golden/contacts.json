@@ -335,7 +335,7 @@
   "record": {
    "archived": false,
    "id": 1,
-   "updated_at": "2024-01-01T12:00:00+01:00"
+   "updated_at": "2024-01-01T11:00:00+00:00"
   },
   "stream": "contacts",
   "type": "RECORD"
@@ -434,7 +434,7 @@
   "record": {
    "archived": true,
    "id": 2,
-   "updated_at": "2024-06-01T12:00:00+02:00"
+   "updated_at": "2024-06-01T10:00:00+00:00"
   },
   "stream": "contacts",
   "type": "RECORD"
@@ -451,14 +451,14 @@
         "archived": false
        },
        "replication_key": "updated_at",
-       "replication_key_value": "2024-01-01T12:00:00+01:00"
+       "replication_key_value": "2024-01-01T11:00:00+00:00"
       },
       {
        "context": {
         "archived": true
        },
        "replication_key": "updated_at",
-       "replication_key_value": "2024-06-01T12:00:00+02:00"
+       "replication_key_value": "2024-06-01T10:00:00+00:00"
       }
      ]
     }

@@ -69,7 +69,12 @@ plugins:
           kind: string
           value: Europe/Zurich
           label: Timezone
-          description: IANA timezone of Bexio's offset-less timestamps (company timezone). All timestamps are emitted in this timezone
+          description: IANA timezone of Bexio's offset-less timestamps (company timezone). Also decides the day of dates
+        - name: output_timezone
+          kind: string
+          value: UTC
+          label: Output Timezone
+          description: IANA timezone all timestamps are emitted in. A timezone with summer time gives two offsets, which some targets reject
         - name: forbidden_stream_behavior
           kind: options
           value: skip

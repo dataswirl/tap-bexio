@@ -17,7 +17,8 @@ Supports Python 3.12, 3.13 and 3.14.
 | `api_url`                   | no       | `https://api.bexio.com` | Base URL of the Bexio API. |
 | `user_agent`                | no       |                         | `User-Agent` header sent with every request. |
 | `page_size`                 | no       | `500`                   | Records per request (max 2000; 500 for 4.0 purchase endpoints). |
-| `timezone`                  | no       | `Europe/Zurich`         | Timezone of Bexio's offset-less 2.0 timestamps, used to build the search filter. All timestamps are emitted as ISO 8601 in this timezone (3.0 and 4.0 timestamps with an offset are converted); dates are emitted as `YYYY-MM-DD`. |
+| `timezone`                  | no       | `Europe/Zurich`         | Company timezone: that of Bexio's offset-less 2.0 timestamps, used to build the search filter. Dates are emitted as `YYYY-MM-DD`, taking the day in this timezone. |
+| `output_timezone`           | no       | `UTC`                   | Timezone all timestamps are emitted in, as ISO 8601 (`2026-10-28T14:25:39+00:00`). A timezone with summer time gives two offsets (`+01:00` and `+02:00` for `Europe/Zurich`), which some targets reject in one column. |
 | `forbidden_stream_behavior` | no       | `skip`                  | On HTTP 403 (missing scope or inactive module): `skip` logs a warning and continues, `fail` stops the sync. |
 
 Set either `auth_token` or all of `client_id`, `client_secret` and `refresh_token`.
@@ -226,6 +227,8 @@ plugins:
         - name: page_size
           kind: integer
         - name: timezone
+          kind: string
+        - name: output_timezone
           kind: string
         - name: forbidden_stream_behavior
           kind: options

@@ -24,6 +24,7 @@ def test_defaults():
         user_agent=None,
         page_size=500,
         timezone=ZoneInfo("Europe/Zurich"),
+        output_timezone=ZoneInfo("UTC"),
         start_date=None,
         forbidden=ForbiddenBehavior.SKIP,
     )
@@ -37,6 +38,7 @@ def test_parses_every_setting():
             "user_agent": "me",
             "page_size": 50,
             "timezone": "Europe/Bucharest",
+            "output_timezone": "Europe/Zurich",
             "start_date": "2024-01-15T00:00:00Z",
             "forbidden_stream_behavior": "fail",
         }
@@ -45,6 +47,7 @@ def test_parses_every_setting():
     assert config.user_agent == "me"
     assert config.page_size == 50
     assert config.timezone == ZoneInfo("Europe/Bucharest")
+    assert config.output_timezone == ZoneInfo("Europe/Zurich")
     assert config.start_date == dt.datetime(2024, 1, 15, tzinfo=dt.UTC)
     assert config.forbidden is ForbiddenBehavior.FAIL
 
@@ -57,6 +60,11 @@ def test_start_date_without_offset_is_utc():
 def test_unknown_timezone_is_rejected():
     with pytest.raises(ValueError, match="Mars/Olympus"):
         BexioConfig.parse({"auth_token": "t", "timezone": "Mars/Olympus"})
+
+
+def test_unknown_output_timezone_is_rejected():
+    with pytest.raises(ValueError, match="Mars/Olympus"):
+        BexioConfig.parse({"auth_token": "t", "output_timezone": "Mars/Olympus"})
 
 
 def test_tap_rejects_unknown_timezone_at_startup(make_tap):

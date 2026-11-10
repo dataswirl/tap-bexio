@@ -12,6 +12,7 @@ from tap_bexio.auth import make_authenticator
 from tap_bexio.config import (
     DEFAULT_API_URL,
     DEFAULT_OAUTH_TOKEN_URL,
+    DEFAULT_OUTPUT_TIMEZONE,
     DEFAULT_PAGE_SIZE,
     DEFAULT_TIMEZONE,
     MAX_PAGE_SIZE,
@@ -104,7 +105,17 @@ SETTINGS = th.PropertiesList(
         title="Timezone",
         description=(
             "IANA timezone of Bexio's offset-less timestamps (company timezone). "
-            "All timestamps are emitted in this timezone."
+            "Also decides the day of dates."
+        ),
+    ),
+    th.Property(
+        "output_timezone",
+        th.StringType,
+        default=DEFAULT_OUTPUT_TIMEZONE,
+        title="Output Timezone",
+        description=(
+            "IANA timezone all timestamps are emitted in. A timezone with summer time "
+            "gives two offsets, which some targets reject."
         ),
     ),
     th.Property(

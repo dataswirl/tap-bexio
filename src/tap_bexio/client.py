@@ -96,8 +96,13 @@ class BexioStream(RESTStream[t.Any]):
 
     @property
     def timezone(self) -> ZoneInfo:
-        """Return the timezone of Bexio's offset-less timestamps and of emitted timestamps."""
+        """Return the company timezone: that of offset-less timestamps and of dates."""
         return self.settings.timezone
+
+    @property
+    def output_timezone(self) -> ZoneInfo:
+        """Return the timezone timestamps are emitted in."""
+        return self.settings.output_timezone
 
     @cached_property
     def _date_fields(self) -> dates.FormatTree:
@@ -163,7 +168,7 @@ class BexioStream(RESTStream[t.Any]):
 
     def post_process(self, row: Record, context: Context | None = None) -> Record | None:
         """Conform dates and timestamps to ISO 8601 and add parent context keys."""
-        dates.conform(row, self._date_fields, self.timezone)
+        dates.conform(row, self._date_fields, self.timezone, self.output_timezone)
         properties = self.schema.get("properties", {})
         for key, value in (context or {}).items():
             if key in properties and row.get(key) is None:

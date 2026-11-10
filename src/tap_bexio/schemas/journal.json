@@ -37,7 +37,7 @@
       ]
     },
     "date": {
-      "format": "date-time",
+      "format": "date",
       "type": [
         "string",
         "null"
